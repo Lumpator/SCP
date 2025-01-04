@@ -44,6 +44,7 @@
             pictureBoxSSHStatus = new PictureBox();
             lblPingStatus = new Label();
             lblSSHStatus = new Label();
+            btnSshConsole = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBoxPingStatus).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBoxSSHStatus).BeginInit();
             SuspendLayout();
@@ -158,7 +159,7 @@
             // pictureBoxPingStatus
             // 
             pictureBoxPingStatus.Image = Properties.Resources.RedCircle;
-            pictureBoxPingStatus.Location = new Point(664, 88);
+            pictureBoxPingStatus.Location = new Point(664, 86);
             pictureBoxPingStatus.Name = "pictureBoxPingStatus";
             pictureBoxPingStatus.Size = new Size(25, 25);
             pictureBoxPingStatus.SizeMode = PictureBoxSizeMode.StretchImage;
@@ -168,7 +169,7 @@
             // pictureBoxSSHStatus
             // 
             pictureBoxSSHStatus.Image = Properties.Resources.RedCircle;
-            pictureBoxSSHStatus.Location = new Point(723, 88);
+            pictureBoxSSHStatus.Location = new Point(723, 86);
             pictureBoxSSHStatus.Name = "pictureBoxSSHStatus";
             pictureBoxSSHStatus.Size = new Size(25, 25);
             pictureBoxSSHStatus.SizeMode = PictureBoxSizeMode.StretchImage;
@@ -178,7 +179,7 @@
             // lblPingStatus
             // 
             lblPingStatus.AutoSize = true;
-            lblPingStatus.Location = new Point(664, 70);
+            lblPingStatus.Location = new Point(664, 68);
             lblPingStatus.Name = "lblPingStatus";
             lblPingStatus.Size = new Size(31, 15);
             lblPingStatus.TabIndex = 14;
@@ -187,17 +188,28 @@
             // lblSSHStatus
             // 
             lblSSHStatus.AutoSize = true;
-            lblSSHStatus.Location = new Point(723, 70);
+            lblSSHStatus.Location = new Point(723, 68);
             lblSSHStatus.Name = "lblSSHStatus";
             lblSSHStatus.Size = new Size(28, 15);
             lblSSHStatus.TabIndex = 15;
             lblSSHStatus.Text = "SSH";
+            // 
+            // btnSshConsole
+            // 
+            btnSshConsole.Location = new Point(768, 88);
+            btnSshConsole.Name = "btnSshConsole";
+            btnSshConsole.Size = new Size(101, 23);
+            btnSshConsole.TabIndex = 16;
+            btnSshConsole.Text = "SSH Console";
+            btnSshConsole.UseVisualStyleBackColor = true;
+            btnSshConsole.Click += btnSshConsole_Click;
             // 
             // SCPTransferForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(881, 506);
+            Controls.Add(btnSshConsole);
             Controls.Add(lblSSHStatus);
             Controls.Add(lblPingStatus);
             Controls.Add(pictureBoxSSHStatus);
@@ -240,5 +252,6 @@
         private PictureBox pictureBoxSSHStatus;
         private Label lblPingStatus;
         private Label lblSSHStatus;
+        private Button btnSshConsole;
         }
     }

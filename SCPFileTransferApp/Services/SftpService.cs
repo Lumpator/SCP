@@ -17,9 +17,18 @@ namespace SCPFileTransferApp.Services
             sftpClient = new SftpClient(hostInfo.Host, hostInfo.Username, hostInfo.Password);
             }
 
-        public void Connect()
+        public bool Connect()
             {
-            sftpClient.Connect();
+            try
+                {
+                sftpClient.ConnectionInfo.Timeout = TimeSpan.FromMilliseconds(3000);
+                sftpClient.Connect();
+                return true;
+                }
+            catch (Exception)
+                {
+                return false;
+                }
             }
         public void Disconnect()
             {

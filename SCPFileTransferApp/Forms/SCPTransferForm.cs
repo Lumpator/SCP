@@ -15,9 +15,8 @@ namespace SCPFileTransferApp
         private string? remoteDirectoryPath;
         private TransferMode transferMode;
         private List<HostInfo> hosts;
-
-
         private SftpService sftpService;
+        private SshService sshService;
 
         public SCPTransferForm()
             {
@@ -27,70 +26,42 @@ namespace SCPFileTransferApp
             comboBoxMode.SelectedIndex = 0; // 0 = Transfer to, 1 = Transfer from          
             }
 
-       
 
-        private void comboBoxHosts_SelectedIndexChanged(object sender, EventArgs e)
+
+        private async void comboBoxHosts_SelectedIndexChanged(object sender, EventArgs e)
             {
             if (comboBoxHosts.SelectedIndex >= 0)
                 {
+                ToggleHostUIElements(false);
+                comboBoxHosts.Enabled = false;
                 var selectedHost = hosts [comboBoxHosts.SelectedIndex];
-                sftpService = new SftpService(selectedHost);
                 txtRemoteDirectoryPath.Clear();
                 treeViewRemoteDirectories.Nodes.Clear();
+
+                // Show spinning circle GIF
+                pictureBoxPingStatus.Image = Properties.Resources.LoadingCircle;
+                pictureBoxSSHStatus.Image = Properties.Resources.LoadingCircle;
+
                 // Perform ping and SSH checks
-                bool canPing = CheckPing(selectedHost.Host);
-                bool canSSH = CheckSSHConnection(selectedHost);
+                bool canPing = await CheckPingAsync(selectedHost.Host);
+                bool canSSH = await CheckSSHConnectionAsync(selectedHost);
 
                 // Update UI based on checks
                 UpdateStatusIcons(canPing, canSSH);
                 if (canPing && canSSH)
                     {
+                    sshService = new SshService(selectedHost);
+                    sftpService = new SftpService(selectedHost);
                     ToggleHostUIElements(true);
-                    } else
-                    { ToggleHostUIElements(false); }
+                    }
                 }
             else
                 {
                 ToggleHostUIElements(false);
                 UpdateStatusIcons(false, false);
                 }
+            comboBoxHosts.Enabled = true;
             }
-
-        private bool CheckPing(string hostname)
-            {
-            try
-                {
-                Ping ping = new Ping();
-                PingReply reply = ping.Send(hostname);
-                return reply.Status == IPStatus.Success;
-                }
-            catch
-                {
-                return false;
-                }
-            }
-
-        private bool CheckSSHConnection(HostInfo host)
-            {
-            try
-                {
-                var client = new SftpService(host);                 
-                    client.Connect();
-                    client.Disconnect();
-                    return true;                  
-                }
-            catch
-                {
-                return false;
-                }
-            }
-
-        private void UpdateStatusIcons(bool canPing, bool canSSH)
-            {
-            pictureBoxPingStatus.Image = canPing ? Properties.Resources.GreenCircle : Properties.Resources.RedCircle;
-            pictureBoxSSHStatus.Image = canSSH ? Properties.Resources.GreenCircle : Properties.Resources.RedCircle;
-            }
-
         private void btnSelectLocalFile_Click(object sender, EventArgs e)
             {
             if (transferMode == TransferMode.TransferTo)
@@ -254,7 +225,7 @@ namespace SCPFileTransferApp
                     await sftpService.DownloadFileAsync(remoteDirectoryPath, localFilePath, progress =>
                     {
                         UpdateProgressBar(progress);
-                                
+
                     });
 
                     MessageBox.Show("File downloaded successfully.");
@@ -272,7 +243,7 @@ namespace SCPFileTransferApp
             {
             if (comboBoxMode.SelectedIndex == 0)
                 {
-                transferMode = TransferMode.TransferTo;          
+                transferMode = TransferMode.TransferTo;
                 }
             else if (comboBoxMode.SelectedIndex == 1)
                 {
@@ -348,15 +319,78 @@ namespace SCPFileTransferApp
             {
             if (enabled)
                 {
+                btnSshConsole.Enabled = true;
                 txtRemoteDirectoryPath.Enabled = true;
                 treeViewRemoteDirectories.Enabled = true;
                 btnSelectRemoteDirectory.Enabled = true;
                 }
             else
                 {
+                btnSshConsole.Enabled = false;
                 txtRemoteDirectoryPath.Enabled = false;
                 treeViewRemoteDirectories.Enabled = false;
                 btnSelectRemoteDirectory.Enabled = false;
+                }
+            }
+        private async Task<bool> CheckPingAsync(string hostname)
+            {
+            const int timeout = 1000; // Timeout in milliseconds (1 second)
+            try
+                {
+                return await Task.Run(() =>
+                {
+                    Ping ping = new Ping();
+                    PingReply reply = ping.Send(hostname, timeout);
+                    return reply.Status == IPStatus.Success;
+                });
+                }
+            catch
+                {
+                return false;
+                }
+            }
+
+        private async Task<bool> CheckSSHConnectionAsync(HostInfo host)
+            {
+            try
+                {
+                return await Task.Run(() =>
+                {
+                    var client = new SftpService(host);
+                    if (client.Connect())
+                        {
+                        client.Disconnect();
+                        return true;
+                        }
+                    return false;
+                });
+                }
+            catch
+                {
+                return false;
+                }
+            }
+
+        private void UpdateStatusIcons(bool canPing, bool canSSH)
+            {
+            pictureBoxPingStatus.Image = canPing ? Properties.Resources.GreenCircle : Properties.Resources.RedCircle;
+            pictureBoxSSHStatus.Image = canSSH ? Properties.Resources.GreenCircle : Properties.Resources.RedCircle;
+            }
+
+        private void button1_Click(object sender, EventArgs e)
+            {
+
+            }
+
+        private void btnSshConsole_Click(object sender, EventArgs e)
+            {
+            try
+                {
+                sshService.OpenSSHConnection();
+                }
+            catch (Exception ex)
+                {
+                MessageBox.Show($"Failed to open SSH connection: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }

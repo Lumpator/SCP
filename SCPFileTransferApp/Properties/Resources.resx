@@ -121,6 +121,9 @@
   <data name="GreenCircle" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\GreenCircle.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="LoadingCircle" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\LoadingCircle.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="RedCircle" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\RedCircle.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

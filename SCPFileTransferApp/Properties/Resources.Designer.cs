@@ -73,6 +73,16 @@ namespace SCPFileTransferApp.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap LoadingCircle {
+            get {
+                object obj = ResourceManager.GetObject("LoadingCircle", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap RedCircle {
             get {
                 object obj = ResourceManager.GetObject("RedCircle", resourceCulture);
