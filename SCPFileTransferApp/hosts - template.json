@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Host1",
+    "host": "192.168.0.10",
+    "username": "user",
+    "password": "user"
+  },
+  {
+    "name": "Host2",
+    "host": "192.168.0.11",
+    "username": "anotheruser",
+    "password": "anotherpassword"
+  }
+]

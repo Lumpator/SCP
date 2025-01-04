@@ -1,5 +1,6 @@
 ﻿using Renci.SshNet;
 using Renci.SshNet.Sftp;
+using SCPFileTransferApp.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,12 +12,9 @@ namespace SCPFileTransferApp.Services
         {
         private SftpClient sftpClient;
 
-        public SftpService()
+        public SftpService(HostInfo hostInfo)
             {
-            string host = "192.168.0.28";
-            string username = "lumpator";
-            string password = "user";
-            sftpClient = new SftpClient(host, username, password);
+            sftpClient = new SftpClient(hostInfo.Host, hostInfo.Username, hostInfo.Password);
             }
 
         public void Connect()
@@ -53,7 +51,6 @@ namespace SCPFileTransferApp.Services
                             {
                             double progress = (double)uploaded / fileSize * 100;
                             progressCallback(progress);
-
                             stopwatch.Restart();
                             }
                     });

@@ -3,26 +3,50 @@ using System.IO;
 using System.Windows.Forms;
 using SCPFileTransferApp.Services;
 using System.Diagnostics;
+using SCPFileTransferApp.Models;
+using Newtonsoft.Json;
 
 namespace SCPFileTransferApp
     {
     public partial class SCPTransferForm : Form
         {
-        private string localFilePath;
-        private string remoteDirectoryPath;
+        private string? localFilePath;
+        private string? remoteDirectoryPath;
+        private TransferMode transferMode;
+        private List<HostInfo> hosts;
+
+
         private SftpService sftpService;
 
         public SCPTransferForm()
             {
             InitializeComponent();
-            sftpService = new SftpService();
-            comboBoxMode.SelectedIndex = 0;
+            LoadHosts();
+            ToggleHostUIElements(false);
+            comboBoxMode.SelectedIndex = 0; // 0 = Transfer to, 1 = Transfer from          
             }
 
+       
+
+        private void comboBoxHosts_SelectedIndexChanged(object sender, EventArgs e)
+            {
+            if (comboBoxHosts.SelectedIndex >= 0)
+                {
+                var selectedHost = hosts [comboBoxHosts.SelectedIndex];
+                sftpService = new SftpService(selectedHost);
+                txtRemoteDirectoryPath.Clear();
+                treeViewRemoteDirectories.Nodes.Clear();
+                ToggleHostUIElements(true);
+                }
+            else
+                {
+                ToggleHostUIElements(false);
+                }
+            }
 
         private void btnSelectLocalFile_Click(object sender, EventArgs e)
             {
-            if (comboBoxMode.SelectedItem.ToString() == "Transfer to")
+            if (transferMode == TransferMode.TransferTo)
                 {
                 using (OpenFileDialog openFileDialog = new OpenFileDialog())
                     {
@@ -35,7 +59,7 @@ namespace SCPFileTransferApp
                         }
                     }
                 }
-            else if (comboBoxMode.SelectedItem.ToString() == "Transfer from")
+            else if (transferMode == TransferMode.TransferFrom)
                 {
                 using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
                     {
@@ -54,11 +78,12 @@ namespace SCPFileTransferApp
                 {
                 sftpService.Disconnect();
                 sftpService.Connect();
-                if (comboBoxMode.SelectedItem.ToString() == "Transfer to")
+
+                if (transferMode == TransferMode.TransferTo)
                     {
                     LoadRemoteDirectories("/");
                     }
-                else if (comboBoxMode.SelectedItem.ToString() == "Transfer from")
+                else if (transferMode == TransferMode.TransferFrom)
                     {
                     LoadRemoteFiles("/");
                     }
@@ -79,7 +104,7 @@ namespace SCPFileTransferApp
                     {
                     var node = new TreeNode(item.Name);
                     node.Tag = item.FullName;
-                    node.Nodes.Add("Loading..."); // Placeholder for lazy loading
+                    node.Nodes.Add("Loading...");
                     treeViewRemoteDirectories.Nodes.Add(node);
                     }
                 }
@@ -94,7 +119,7 @@ namespace SCPFileTransferApp
                 node.Tag = item.FullName;
                 if (item.IsDirectory)
                     {
-                    node.Nodes.Add("Loading..."); // Placeholder for lazy loading
+                    node.Nodes.Add("Loading...");
                     }
                 treeViewRemoteDirectories.Nodes.Add(node);
                 }
@@ -124,7 +149,7 @@ namespace SCPFileTransferApp
             var selectedNode = e.Node;
             var selectedPath = selectedNode.Tag.ToString();
 
-            if (comboBoxMode.SelectedItem.ToString() == "Transfer to")
+            if (transferMode == TransferMode.TransferTo)
                 {
                 if (selectedNode.Nodes.Count > 0) // It's a directory
                     {
@@ -137,7 +162,7 @@ namespace SCPFileTransferApp
                     treeViewRemoteDirectories.SelectedNode = null;
                     }
                 }
-            else if (comboBoxMode.SelectedItem.ToString() == "Transfer from")
+            else if (transferMode == TransferMode.TransferFrom)
                 {
                 if (selectedNode.Nodes.Count == 0) // It's a file
                     {
@@ -161,35 +186,28 @@ namespace SCPFileTransferApp
             localFilePath = txtLocalFilePath.Text;
             remoteDirectoryPath = txtRemoteDirectoryPath.Text; // Convert backslashes to forward slashes for SFTP
 
-
             if (string.IsNullOrEmpty(localFilePath) || string.IsNullOrEmpty(remoteDirectoryPath))
                 {
                 MessageBox.Show("Please select both local file and remote directory.");
                 return;
                 }
-
             try
                 {
-                if (comboBoxMode.SelectedItem.ToString() == "Transfer to")
+                if (transferMode == TransferMode.TransferTo)
                     {
                     await sftpService.UploadFileAsync(localFilePath, remoteDirectoryPath, progress =>
                     {
-                        this.Invoke((MethodInvoker)delegate
-                            {
-                                progressBar.Value = (int)progress;
-                                });
+                        UpdateProgressBar(progress);
                     });
 
                     MessageBox.Show("File transferred successfully.");
                     }
-                else if (comboBoxMode.SelectedItem.ToString() == "Transfer from")
+                else if (transferMode == TransferMode.TransferFrom)
                     {
                     await sftpService.DownloadFileAsync(remoteDirectoryPath, localFilePath, progress =>
                     {
-                        this.Invoke((MethodInvoker)delegate
-                            {
-                                progressBar.Value = (int)progress;
-                                });
+                        UpdateProgressBar(progress);
+                                
                     });
 
                     MessageBox.Show("File downloaded successfully.");
@@ -202,6 +220,45 @@ namespace SCPFileTransferApp
                 MessageBox.Show("Error: " + ex.Message);
                 }
             }
+
+        private void comboBoxMode_SelectedIndexChanged(object sender, EventArgs e)
+            {
+            if (comboBoxMode.SelectedIndex == 0)
+                {
+                transferMode = TransferMode.TransferTo;          
+                }
+            else if (comboBoxMode.SelectedIndex == 1)
+                {
+                transferMode = TransferMode.TransferFrom;
+                }
+            UpdateTransferModeUI();
+            }
+
+
+        public enum TransferMode
+            {
+            TransferTo,
+            TransferFrom
+            }
+
+        private void UpdateTransferModeUI()
+            {
+            if (transferMode == TransferMode.TransferTo)
+                {
+                lblFileSize.Text = "File Size:";
+                btnTransferFile.Text = "Transfer ->";
+                btnSelectLocalFile.Text = "Browse Local Files";
+                btnSelectRemoteDirectory.Text = "Browse Remote Directories";
+                }
+            else if (transferMode == TransferMode.TransferFrom)
+                {
+                lblFileSize.Text = "File Size:";
+                btnTransferFile.Text = "Transfer <-";
+                btnSelectLocalFile.Text = "Browse Local Directories";
+                btnSelectRemoteDirectory.Text = "Browse Remote Files";
+                }
+            }
+
         private void UpdateFileSizeLabel(long? fileSize = null)
             {
             if (fileSize.HasValue)
@@ -214,24 +271,49 @@ namespace SCPFileTransferApp
                 lblFileSize.Text = $"File Size: {fileInfo.Length / 1024.0 / 1024.0:F2} MB";
                 }
             }
-
-        private void comboBoxMode_SelectedIndexChanged(object sender, EventArgs e)
+        private void UpdateProgressBar(double progress)
             {
-            if (comboBoxMode.SelectedItem.ToString() == "Transfer to")
+            this.Invoke((MethodInvoker)delegate
                 {
-                lblFileSize.Text = "File Size:";
-                btnTransferFile.Text = "Transfer ->";
-                btnSelectLocalFile.Text = "Select Local File";
-                btnSelectRemoteDirectory.Text = "Select Remote Directory";
+                    progressBar.Value = (int)progress;
+                    });
+            }
+
+        private void LoadHosts()
+            {
+            string jsonFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "hosts.json");
+            if (File.Exists(jsonFilePath))
+                {
+                string json = File.ReadAllText(jsonFilePath);
+                hosts = JsonConvert.DeserializeObject<List<HostInfo>>(json);
+                comboBoxHosts.Items.Clear();
+                foreach (var host in hosts)
+                    {
+                    comboBoxHosts.Items.Add(host.Name);
+                    }
                 }
-            else if (comboBoxMode.SelectedItem.ToString() == "Transfer from")
+            else
                 {
-                lblFileSize.Text = "File Size:";
-                btnTransferFile.Text = "Transfer <-";
-                btnSelectLocalFile.Text = "Select Local Folder";
-                btnSelectRemoteDirectory.Text = "Select Remote File";
+                MessageBox.Show("hosts.json file not found.");
+                }
+            }
+        private void ToggleHostUIElements(bool enabled)
+            {
+            if (enabled)
+                {
+                txtRemoteDirectoryPath.Enabled = true;
+                treeViewRemoteDirectories.Enabled = true;
+                btnSelectRemoteDirectory.Enabled = true;
+                }
+            else
+                {
+                txtRemoteDirectoryPath.Enabled = false;
+                treeViewRemoteDirectories.Enabled = false;
+                btnSelectRemoteDirectory.Enabled = false;
                 }
             }
         }
+
+
 
     }
