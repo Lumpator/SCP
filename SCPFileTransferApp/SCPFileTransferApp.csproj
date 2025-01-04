@@ -6,10 +6,15 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationIcon>file-transfer.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Forms\SCPTransfer" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="file-transfer.ico" />
   </ItemGroup>
 
   <ItemGroup>

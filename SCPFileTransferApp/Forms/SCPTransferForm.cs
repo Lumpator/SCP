@@ -263,6 +263,7 @@ namespace SCPFileTransferApp
             {
             if (transferMode == TransferMode.TransferTo)
                 {
+                panelDragDrop.Enabled = true;
                 lblFileSize.Text = "File Size:";
                 btnTransferFile.Text = "Transfer ->";
                 btnSelectLocalFile.Text = "Browse Local Files";
@@ -270,6 +271,7 @@ namespace SCPFileTransferApp
                 }
             else if (transferMode == TransferMode.TransferFrom)
                 {
+                panelDragDrop.Enabled = false;
                 lblFileSize.Text = "File Size:";
                 btnTransferFile.Text = "Transfer <-";
                 btnSelectLocalFile.Text = "Browse Local Directories";
@@ -391,6 +393,42 @@ namespace SCPFileTransferApp
             catch (Exception ex)
                 {
                 MessageBox.Show($"Failed to open SSH connection: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+
+        private void panelDragDrop_DragEnter(object sender, DragEventArgs e)
+            {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                {
+                e.Effect = DragDropEffects.Copy;
+                }
+            else
+                {
+                e.Effect = DragDropEffects.None;
+                }
+            }
+
+        private void panelDragDrop_DragDrop(object sender, DragEventArgs e)
+            {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                {
+                string [] files = (string [])e.Data.GetData(DataFormats.FileDrop);
+                if (files.Length > 0)
+                    {
+                    string filePath = files [0];
+                    txtLocalFilePath.Text = filePath;
+
+                    // Check if "Transfer to" mode is selected
+                    if (transferMode == TransferMode.TransferTo)
+                        {
+                        localFilePath = filePath;
+                        UpdateFileSizeLabel();
+                        }
+                    else
+                        {
+                        MessageBox.Show("Drag and drop is only supported in 'Transfer to' mode.");
+                        }
+                    }
                 }
             }
         }
