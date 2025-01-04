@@ -5,6 +5,7 @@ using SCPFileTransferApp.Services;
 using System.Diagnostics;
 using SCPFileTransferApp.Models;
 using Newtonsoft.Json;
+using System.Net.NetworkInformation;
 
 namespace SCPFileTransferApp
     {
@@ -36,12 +37,58 @@ namespace SCPFileTransferApp
                 sftpService = new SftpService(selectedHost);
                 txtRemoteDirectoryPath.Clear();
                 treeViewRemoteDirectories.Nodes.Clear();
-                ToggleHostUIElements(true);
+                // Perform ping and SSH checks
+                bool canPing = CheckPing(selectedHost.Host);
+                bool canSSH = CheckSSHConnection(selectedHost);
+
+                // Update UI based on checks
+                UpdateStatusIcons(canPing, canSSH);
+                if (canPing && canSSH)
+                    {
+                    ToggleHostUIElements(true);
+                    } else
+                    { ToggleHostUIElements(false); }
                 }
             else
                 {
                 ToggleHostUIElements(false);
+                UpdateStatusIcons(false, false);
                 }
+            }
+
+        private bool CheckPing(string hostname)
+            {
+            try
+                {
+                Ping ping = new Ping();
+                PingReply reply = ping.Send(hostname);
+                return reply.Status == IPStatus.Success;
+                }
+            catch
+                {
+                return false;
+                }
+            }
+
+        private bool CheckSSHConnection(HostInfo host)
+            {
+            try
+                {
+                var client = new SftpService(host);                 
+                    client.Connect();
+                    client.Disconnect();
+                    return true;                  
+                }
+            catch
+                {
+                return false;
+                }
+            }
+
+        private void UpdateStatusIcons(bool canPing, bool canSSH)
+            {
+            pictureBoxPingStatus.Image = canPing ? Properties.Resources.GreenCircle : Properties.Resources.RedCircle;
+            pictureBoxSSHStatus.Image = canSSH ? Properties.Resources.GreenCircle : Properties.Resources.RedCircle;
             }
 
         private void btnSelectLocalFile_Click(object sender, EventArgs e)
@@ -313,7 +360,5 @@ namespace SCPFileTransferApp
                 }
             }
         }
-
-
 
     }

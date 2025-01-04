@@ -40,6 +40,12 @@
             comboBoxHosts = new ComboBox();
             lblTransferMode = new Label();
             lblSelectHost = new Label();
+            pictureBoxPingStatus = new PictureBox();
+            pictureBoxSSHStatus = new PictureBox();
+            lblPingStatus = new Label();
+            lblSSHStatus = new Label();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxPingStatus).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxSSHStatus).BeginInit();
             SuspendLayout();
             // 
             // btnSelectLocalFile
@@ -149,11 +155,53 @@
             lblSelectHost.TabIndex = 11;
             lblSelectHost.Text = "Select Remote Host";
             // 
+            // pictureBoxPingStatus
+            // 
+            pictureBoxPingStatus.Image = Properties.Resources.RedCircle;
+            pictureBoxPingStatus.Location = new Point(664, 88);
+            pictureBoxPingStatus.Name = "pictureBoxPingStatus";
+            pictureBoxPingStatus.Size = new Size(25, 25);
+            pictureBoxPingStatus.SizeMode = PictureBoxSizeMode.StretchImage;
+            pictureBoxPingStatus.TabIndex = 12;
+            pictureBoxPingStatus.TabStop = false;
+            // 
+            // pictureBoxSSHStatus
+            // 
+            pictureBoxSSHStatus.Image = Properties.Resources.RedCircle;
+            pictureBoxSSHStatus.Location = new Point(723, 88);
+            pictureBoxSSHStatus.Name = "pictureBoxSSHStatus";
+            pictureBoxSSHStatus.Size = new Size(25, 25);
+            pictureBoxSSHStatus.SizeMode = PictureBoxSizeMode.StretchImage;
+            pictureBoxSSHStatus.TabIndex = 13;
+            pictureBoxSSHStatus.TabStop = false;
+            // 
+            // lblPingStatus
+            // 
+            lblPingStatus.AutoSize = true;
+            lblPingStatus.Location = new Point(664, 70);
+            lblPingStatus.Name = "lblPingStatus";
+            lblPingStatus.Size = new Size(31, 15);
+            lblPingStatus.TabIndex = 14;
+            lblPingStatus.Text = "Ping";
+            // 
+            // lblSSHStatus
+            // 
+            lblSSHStatus.AutoSize = true;
+            lblSSHStatus.Location = new Point(723, 70);
+            lblSSHStatus.Name = "lblSSHStatus";
+            lblSSHStatus.Size = new Size(28, 15);
+            lblSSHStatus.TabIndex = 15;
+            lblSSHStatus.Text = "SSH";
+            // 
             // SCPTransferForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(881, 506);
+            Controls.Add(lblSSHStatus);
+            Controls.Add(lblPingStatus);
+            Controls.Add(pictureBoxSSHStatus);
+            Controls.Add(pictureBoxPingStatus);
             Controls.Add(lblSelectHost);
             Controls.Add(lblTransferMode);
             Controls.Add(comboBoxHosts);
@@ -168,6 +216,8 @@
             Controls.Add(btnSelectLocalFile);
             Name = "SCPTransferForm";
             Text = "SCP File Transfer";
+            ((System.ComponentModel.ISupportInitialize)pictureBoxPingStatus).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxSSHStatus).EndInit();
             ResumeLayout(false);
             PerformLayout();
             }
@@ -186,5 +236,9 @@
         private ComboBox comboBoxHosts;
         private Label lblTransferMode;
         private Label lblSelectHost;
+        private PictureBox pictureBoxPingStatus;
+        private PictureBox pictureBoxSSHStatus;
+        private Label lblPingStatus;
+        private Label lblSSHStatus;
         }
     }
