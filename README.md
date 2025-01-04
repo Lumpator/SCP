@@ -22,6 +22,7 @@ SCP File Transfer App is a Windows Forms application that allows users to transf
 1. Run the application.
 
 2. Load the hosts by ensuring the `hosts.json` file is in the application's base directory. The file should have the following structure:
+```  
 [
     {
         "Name": "Host1",
@@ -36,21 +37,22 @@ SCP File Transfer App is a Windows Forms application that allows users to transf
         "Password": "password2"
     }
 ]
-3. Select a host from the dropdown list. The app will automatically check the connectivity and SSH availability of the selected host.
+```
+4. Select a host from the dropdown list. The app will automatically check the connectivity and SSH availability of the selected host.
 
-4. Choose the transfer mode (Transfer to or Transfer from) using the mode dropdown.
+5. Choose the transfer mode (Transfer to or Transfer from) using the mode dropdown.
 
-5. Select the local file or directory:
+6. Select the local file or directory:
     - For "Transfer to" mode, click "Browse Local Files" to select a file.
     - For "Transfer from" mode, click "Browse Local Directories" to select a directory.
 
-6. Select the remote directory or file:
+7. Select the remote directory or file:
     - For "Transfer to" mode, browse the remote directories and select a directory.
     - For "Transfer from" mode, browse the remote files and select a file.
 
-7. Click the "Transfer" button to start the file transfer. The progress bar will display the transfer progress.
+8. Click the "Transfer" button to start the file transfer. The progress bar will display the transfer progress.
 
-8. Optionally, open an SSH console to the selected host by clicking the "SSH Console" button.
+9. Optionally, open an SSH console to the selected host by clicking the "SSH Console" button.
 
 ## License
 
