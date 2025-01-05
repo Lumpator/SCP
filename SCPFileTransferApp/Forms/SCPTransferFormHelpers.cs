@@ -5,6 +5,8 @@ using System.Windows.Forms;
 using Newtonsoft.Json;
 using SCPFileTransferApp.Models;
 using SCPFileTransferApp.Services;
+using static SCPFileTransferApp.Models.Enums;
+using static SCPFileTransferApp.SCPTransferForm;
 
 namespace SCPFileTransferApp.Helpers
     {
@@ -67,7 +69,46 @@ namespace SCPFileTransferApp.Helpers
             pingStatus.Image = loading ? loadingImage : Properties.Resources.RedCircle;
             SSHstatus.Image = loading ? loadingImage : Properties.Resources.RedCircle;
             }
-        }
 
-    
+        public static void ToggleHostUIElements(bool enabled, HostUIElements hostUIElements)
+            {
+            hostUIElements.BtnSshConsole.Enabled = enabled;
+            hostUIElements.TxtRemoteDirectoryPath.Enabled = enabled;
+            hostUIElements.TreeViewRemoteDirectories.Enabled = enabled;
+            hostUIElements.BtnSelectRemoteDirectory.Enabled = enabled;
+            }
+        public static void UpdateTransferModeUI(TransferMode transferMode, TransferModeUIElements uiElements)
+            {
+            if (transferMode == TransferMode.TransferTo)
+                {
+                uiElements.PanelDragDrop.Enabled = true;
+                uiElements.LblFileSize.Text = "File Size:";
+                uiElements.BtnTransferFile.Text = "Transfer ->";
+                uiElements.BtnSelectLocalFile.Text = "Browse Local Files";
+                uiElements.BtnSelectRemoteDirectory.Text = "Browse Remote Directories";
+                }
+            else if (transferMode == TransferMode.TransferFrom)
+                {
+                uiElements.PanelDragDrop.Enabled = false;
+                uiElements.LblFileSize.Text = "File Size:";
+                uiElements.BtnTransferFile.Text = "Transfer <-";
+                uiElements.BtnSelectLocalFile.Text = "Browse Local Directories";
+                uiElements.BtnSelectRemoteDirectory.Text = "Browse Remote Files";
+                }
+            }
+        public static void UpdateFileSizeLabel(Label lblFileSize, string localFilePath, long? fileSize = null)
+            {
+            if (fileSize.HasValue)
+                {
+                lblFileSize.Text = $"File Size: {fileSize.Value / 1024.0 / 1024.0:F2} MB";
+                }
+            else if (!string.IsNullOrEmpty(localFilePath))
+                {
+                FileInfo fileInfo = new FileInfo(localFilePath);
+                lblFileSize.Text = $"File Size: {fileInfo.Length / 1024.0 / 1024.0:F2} MB";
+                }
+            }
+
+        }
+  
     }

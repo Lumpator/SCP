@@ -2,11 +2,9 @@ using System;
 using System.IO;
 using System.Windows.Forms;
 using SCPFileTransferApp.Services;
-using System.Diagnostics;
 using SCPFileTransferApp.Models;
-using Newtonsoft.Json;
-using System.Net.NetworkInformation;
 using SCPFileTransferApp.Helpers;
+using static SCPFileTransferApp.Models.Enums;
 
 namespace SCPFileTransferApp
     {
@@ -19,6 +17,8 @@ namespace SCPFileTransferApp
         private SftpService sftpService;
         private SshService sshService;
         private NetworkService networkService;
+        private HostUIElements hostUIElements;
+        private TransferModeUIElements transferModeUIElements;
 
         public SCPTransferForm()
             {
@@ -26,7 +26,25 @@ namespace SCPFileTransferApp
             networkService = new NetworkService();
             hosts = SCPTransferFormHelpers.LoadHosts();
             PopulateHostsComboBox(hosts);
-            ToggleHostUIElements(false);
+
+            hostUIElements = new HostUIElements
+                {
+                BtnSshConsole = btnSshConsole,
+                TxtRemoteDirectoryPath = txtRemoteDirectoryPath,
+                TreeViewRemoteDirectories = treeViewRemoteDirectories,
+                BtnSelectRemoteDirectory = btnSelectRemoteDirectory
+                };
+
+            transferModeUIElements = new TransferModeUIElements
+                {
+                PanelDragDrop = panelDragDrop,
+                LblFileSize = lblFileSize,
+                BtnTransferFile = btnTransferFile,
+                BtnSelectLocalFile = btnSelectLocalFile,
+                BtnSelectRemoteDirectory = btnSelectRemoteDirectory
+                };
+
+            SCPTransferFormHelpers.ToggleHostUIElements(false, hostUIElements);
             comboBoxMode.SelectedIndex = 0; // 0 = Transfer to, 1 = Transfer from          
             }
 
@@ -35,7 +53,7 @@ namespace SCPFileTransferApp
             {
             if (comboBoxHosts.SelectedIndex >= 0)
                 {
-                ToggleHostUIElements(false);
+                SCPTransferFormHelpers.ToggleHostUIElements(false, hostUIElements);
                 comboBoxHosts.Enabled = false;
                 txtRemoteDirectoryPath.Clear();
                 treeViewRemoteDirectories.Nodes.Clear();
@@ -44,7 +62,7 @@ namespace SCPFileTransferApp
                 }
             else
                 {
-                ToggleHostUIElements(false);
+                SCPTransferFormHelpers.ToggleHostUIElements(false, hostUIElements);
                 SCPTransferFormHelpers.UpdateStatusIcons(false, false, pictureBoxPingStatus, pictureBoxSSHStatus);
                 }
             comboBoxHosts.Enabled = true;
@@ -60,7 +78,7 @@ namespace SCPFileTransferApp
                         {
                         localFilePath = openFileDialog.FileName;
                         txtLocalFilePath.Text = localFilePath;
-                        UpdateFileSizeLabel();
+                        SCPTransferFormHelpers.UpdateFileSizeLabel(lblFileSize, localFilePath);
                         }
                     }
                 }
@@ -144,7 +162,7 @@ namespace SCPFileTransferApp
                     txtRemoteDirectoryPath.Text = remoteDirectoryPath;
 
                     var fileAttributes = sftpService.GetFileAttributes(remoteDirectoryPath);
-                    UpdateFileSizeLabel(fileAttributes.Size);
+                    SCPTransferFormHelpers.UpdateFileSizeLabel(lblFileSize, localFilePath, fileAttributes.Size);
                     }
                 else
                     {
@@ -156,6 +174,8 @@ namespace SCPFileTransferApp
 
         private async void btnTransferFile_Click(object sender, EventArgs e)
             {
+           
+
             localFilePath = txtLocalFilePath.Text;
             remoteDirectoryPath = txtRemoteDirectoryPath.Text; 
 
@@ -164,6 +184,7 @@ namespace SCPFileTransferApp
                 MessageBox.Show("Please select both local and remote paths.");
                 return;
                 }
+            btnTransferFile.Enabled = false;
             try
                 {
                 if (transferMode == TransferMode.TransferTo)
@@ -189,7 +210,9 @@ namespace SCPFileTransferApp
             catch (Exception ex)
                 {
                 MessageBox.Show("Error: " + ex.Message);
-                }
+                } 
+            finally { btnTransferFile.Enabled = true; }
+            
             }
 
         private void comboBoxMode_SelectedIndexChanged(object sender, EventArgs e)
@@ -202,73 +225,17 @@ namespace SCPFileTransferApp
                 {
                 transferMode = TransferMode.TransferFrom;
                 }
-            UpdateTransferModeUI();
+            SCPTransferFormHelpers.UpdateTransferModeUI(transferMode, transferModeUIElements);
             }
 
-        public enum TransferMode
-            {
-            TransferTo,
-            TransferFrom
-            }
-
-        private void UpdateTransferModeUI()
-            {
-            if (transferMode == TransferMode.TransferTo)
-                {
-                panelDragDrop.Enabled = true;
-                lblFileSize.Text = "File Size:";
-                btnTransferFile.Text = "Transfer ->";
-                btnSelectLocalFile.Text = "Browse Local Files";
-                btnSelectRemoteDirectory.Text = "Browse Remote Directories";
-                }
-            else if (transferMode == TransferMode.TransferFrom)
-                {
-                panelDragDrop.Enabled = false;
-                lblFileSize.Text = "File Size:";
-                btnTransferFile.Text = "Transfer <-";
-                btnSelectLocalFile.Text = "Browse Local Directories";
-                btnSelectRemoteDirectory.Text = "Browse Remote Files";
-                }
-            }
-
-        private void UpdateFileSizeLabel(long? fileSize = null)
-            {
-            if (fileSize.HasValue)
-                {
-                lblFileSize.Text = $"File Size: {fileSize.Value / 1024.0 / 1024.0:F2} MB";
-                }
-            else if (!string.IsNullOrEmpty(localFilePath))
-                {
-                FileInfo fileInfo = new FileInfo(localFilePath);
-                lblFileSize.Text = $"File Size: {fileInfo.Length / 1024.0 / 1024.0:F2} MB";
-                }
-            }
+ 
         private void UpdateProgressBar(double progress)
             {
             this.Invoke((MethodInvoker)delegate
                 {
                     progressBar.Value = (int)progress;
                     });
-            }
-
-
-        private void ToggleHostUIElements(bool enabled)
-            {
-            if (enabled)
-                {
-                btnSshConsole.Enabled = true;
-                txtRemoteDirectoryPath.Enabled = true;
-                treeViewRemoteDirectories.Enabled = true;
-                btnSelectRemoteDirectory.Enabled = true;
-                }
-            else
-                {
-                btnSshConsole.Enabled = false;
-                txtRemoteDirectoryPath.Enabled = false;
-                treeViewRemoteDirectories.Enabled = false;
-                btnSelectRemoteDirectory.Enabled = false;
-                }
-            }
+            }  
 
         private void btnSshConsole_Click(object sender, EventArgs e)
             {
@@ -308,7 +275,7 @@ namespace SCPFileTransferApp
                     if (transferMode == TransferMode.TransferTo)
                         {
                         localFilePath = filePath;
-                        UpdateFileSizeLabel();
+                        SCPTransferFormHelpers.UpdateFileSizeLabel(lblFileSize, localFilePath);
                         }
                     else
                         {
@@ -331,7 +298,7 @@ namespace SCPFileTransferApp
                 {
                 sshService = new SshService(selectedHost);
                 sftpService = new SftpService(selectedHost);
-                ToggleHostUIElements(true);
+                SCPTransferFormHelpers.ToggleHostUIElements(true, hostUIElements);
                 }
             }
 
