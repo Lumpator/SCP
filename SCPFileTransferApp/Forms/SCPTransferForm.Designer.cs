@@ -91,13 +91,13 @@
             // 
             // btnTransferFile
             // 
-            btnTransferFile.BackColor = Color.LightSkyBlue;
+            btnTransferFile.BackColor = Color.LightGreen;
             btnTransferFile.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnTransferFile.Location = new Point(369, 460);
             btnTransferFile.Name = "btnTransferFile";
             btnTransferFile.Size = new Size(159, 23);
             btnTransferFile.TabIndex = 4;
-            btnTransferFile.Text = "Transfer File ->";
+            btnTransferFile.Text = "Start File Transfer ->";
             btnTransferFile.UseVisualStyleBackColor = false;
             btnTransferFile.Click += btnTransferFile_Click;
             // 

@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Windows.Forms;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using SCPFileTransferApp.Models;
 using SCPFileTransferApp.Services;
 using static SCPFileTransferApp.Models.Enums;
-using static SCPFileTransferApp.SCPTransferForm;
 
 namespace SCPFileTransferApp.Helpers
     {
     public static class SCPTransferFormHelpers
         {
-        public static List<HostInfo> LoadHosts()
+        public static List<HostInfo>? LoadHosts()
             {
             string jsonFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "hosts.json");
             if (File.Exists(jsonFilePath))
@@ -83,7 +78,7 @@ namespace SCPFileTransferApp.Helpers
                 {
                 uiElements.PanelDragDrop.Enabled = true;
                 uiElements.LblFileSize.Text = "File Size:";
-                uiElements.BtnTransferFile.Text = "Transfer ->";
+                uiElements.BtnTransferFile.Text = "Start File Transfer ->";
                 uiElements.BtnSelectLocalFile.Text = "Browse Local Files";
                 uiElements.BtnSelectRemoteDirectory.Text = "Browse Remote Directories";
                 }
@@ -91,7 +86,7 @@ namespace SCPFileTransferApp.Helpers
                 {
                 uiElements.PanelDragDrop.Enabled = false;
                 uiElements.LblFileSize.Text = "File Size:";
-                uiElements.BtnTransferFile.Text = "Transfer <-";
+                uiElements.BtnTransferFile.Text = "Start File Transfer <-";
                 uiElements.BtnSelectLocalFile.Text = "Browse Local Directories";
                 uiElements.BtnSelectRemoteDirectory.Text = "Browse Remote Files";
                 }
@@ -109,6 +104,19 @@ namespace SCPFileTransferApp.Helpers
                 }
             }
 
+        public static void UpdateProgressBar(Form form, ProgressBar progressBar, double progress)
+            {
+            form.Invoke((MethodInvoker)delegate
+                {
+                    progressBar.Value = (int)progress;
+                    });
+            }
+
+        public static bool IsDirectory(SftpService sftpService, TreeNode node)
+            {
+            var path = node.Tag.ToString();
+            var attributes = sftpService.GetFileAttributes(path);
+            return attributes.IsDirectory;
+            }
         }
-  
     }

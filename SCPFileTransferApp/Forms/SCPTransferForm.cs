@@ -1,9 +1,6 @@
-using System;
-using System.IO;
-using System.Windows.Forms;
-using SCPFileTransferApp.Services;
-using SCPFileTransferApp.Models;
 using SCPFileTransferApp.Helpers;
+using SCPFileTransferApp.Models;
+using SCPFileTransferApp.Services;
 using static SCPFileTransferApp.Models.Enums;
 
 namespace SCPFileTransferApp
@@ -143,7 +140,7 @@ namespace SCPFileTransferApp
 
             if (transferMode == TransferMode.TransferTo)
                 {
-                if (selectedNode.Nodes.Count > 0) // It's a directory
+                if (selectedNode.Nodes.Count > 0 || SCPTransferFormHelpers.IsDirectory(sftpService, selectedNode))
                     {
                     remoteDirectoryPath = selectedPath;
                     txtRemoteDirectoryPath.Text = remoteDirectoryPath;
@@ -156,7 +153,7 @@ namespace SCPFileTransferApp
                 }
             else if (transferMode == TransferMode.TransferFrom)
                 {
-                if (selectedNode.Nodes.Count == 0) // It's a file
+                if (selectedNode.Nodes.Count == 0 && !SCPTransferFormHelpers.IsDirectory(sftpService, selectedNode))
                     {
                     remoteDirectoryPath = selectedPath;
                     txtRemoteDirectoryPath.Text = remoteDirectoryPath;
@@ -174,10 +171,8 @@ namespace SCPFileTransferApp
 
         private async void btnTransferFile_Click(object sender, EventArgs e)
             {
-           
-
             localFilePath = txtLocalFilePath.Text;
-            remoteDirectoryPath = txtRemoteDirectoryPath.Text; 
+            remoteDirectoryPath = txtRemoteDirectoryPath.Text;
 
             if (string.IsNullOrEmpty(localFilePath) || string.IsNullOrEmpty(remoteDirectoryPath))
                 {
@@ -185,13 +180,15 @@ namespace SCPFileTransferApp
                 return;
                 }
             btnTransferFile.Enabled = false;
+            comboBoxHosts.Enabled = false;
+            SCPTransferFormHelpers.ToggleHostUIElements(false, hostUIElements);
             try
                 {
                 if (transferMode == TransferMode.TransferTo)
                     {
                     await sftpService.UploadFileAsync(localFilePath, remoteDirectoryPath, progress =>
                     {
-                        UpdateProgressBar(progress);
+                        SCPTransferFormHelpers.UpdateProgressBar(this, progressBar, progress);
                     });
 
                     MessageBox.Show("File transferred successfully.");
@@ -200,7 +197,7 @@ namespace SCPFileTransferApp
                     {
                     await sftpService.DownloadFileAsync(remoteDirectoryPath, localFilePath, progress =>
                     {
-                        UpdateProgressBar(progress);
+                        SCPTransferFormHelpers.UpdateProgressBar(this, progressBar, progress);
 
                     });
                     MessageBox.Show("File transferred successfully.");
@@ -210,9 +207,13 @@ namespace SCPFileTransferApp
             catch (Exception ex)
                 {
                 MessageBox.Show("Error: " + ex.Message);
-                } 
-            finally { btnTransferFile.Enabled = true; }
-            
+                }
+            finally
+                {
+                btnTransferFile.Enabled = true;
+                comboBoxHosts.Enabled = true;
+                SCPTransferFormHelpers.ToggleHostUIElements(true, hostUIElements);
+                }
             }
 
         private void comboBoxMode_SelectedIndexChanged(object sender, EventArgs e)
@@ -227,15 +228,6 @@ namespace SCPFileTransferApp
                 }
             SCPTransferFormHelpers.UpdateTransferModeUI(transferMode, transferModeUIElements);
             }
-
- 
-        private void UpdateProgressBar(double progress)
-            {
-            this.Invoke((MethodInvoker)delegate
-                {
-                    progressBar.Value = (int)progress;
-                    });
-            }  
 
         private void btnSshConsole_Click(object sender, EventArgs e)
             {
@@ -270,8 +262,6 @@ namespace SCPFileTransferApp
                     {
                     string filePath = files [0];
                     txtLocalFilePath.Text = filePath;
-
-                    // Check if "Transfer to" mode is selected
                     if (transferMode == TransferMode.TransferTo)
                         {
                         localFilePath = filePath;
