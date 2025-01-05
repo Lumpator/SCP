@@ -91,5 +91,26 @@ namespace SCPFileTransferApp.Services
             {
             return sftpClient.GetAttributes(remoteFilePath);
             }
+
+        public static async Task<bool> CheckSSHConnectionAsync(HostInfo host)
+            {
+            try
+                {
+                return await Task.Run(() =>
+                {
+                    var client = new SftpService(host);
+                    if (client.Connect())
+                        {
+                        client.Disconnect();
+                        return true;
+                        }
+                    return false;
+                });
+                }
+            catch
+                {
+                return false;
+                }
+            }
         }
     }
