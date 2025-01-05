@@ -72,6 +72,16 @@ namespace SCPFileTransferApp.Helpers
             hostUIElements.TreeViewRemoteDirectories.Enabled = enabled;
             hostUIElements.BtnSelectRemoteDirectory.Enabled = enabled;
             }
+        public static void ToggleDisabledDuringTransferUIElements(bool enabled, DisabledDuringTransferElements UIElements)
+            {
+            UIElements.TxtRemoteDirectoryPath.Enabled = enabled;
+            UIElements.TxtLocalDirectoryPath.Enabled = enabled;
+            UIElements.TreeViewRemoteDirectories.Enabled = enabled;
+            UIElements.BtnSelectRemoteDirectory.Enabled = enabled;
+            UIElements.BtnSelectLocalFile.Enabled = enabled;
+            UIElements.BtnTransferFile.Enabled = enabled;
+            UIElements.ComboBoxHosts.Enabled = enabled;
+            }
         public static void UpdateTransferModeUI(TransferMode transferMode, TransferModeUIElements uiElements)
             {
             if (transferMode == TransferMode.TransferTo)

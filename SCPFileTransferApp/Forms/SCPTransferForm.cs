@@ -16,6 +16,7 @@ namespace SCPFileTransferApp
         private NetworkService networkService;
         private HostUIElements hostUIElements;
         private TransferModeUIElements transferModeUIElements;
+        private DisabledDuringTransferElements disabledDuringTransferElements;
 
         public SCPTransferForm()
             {
@@ -39,6 +40,17 @@ namespace SCPFileTransferApp
                 BtnTransferFile = btnTransferFile,
                 BtnSelectLocalFile = btnSelectLocalFile,
                 BtnSelectRemoteDirectory = btnSelectRemoteDirectory
+                };
+
+            disabledDuringTransferElements = new DisabledDuringTransferElements
+                {
+                TxtRemoteDirectoryPath = txtRemoteDirectoryPath,
+                TxtLocalDirectoryPath = txtLocalFilePath,
+                TreeViewRemoteDirectories = treeViewRemoteDirectories,
+                BtnSelectRemoteDirectory = btnSelectRemoteDirectory,
+                BtnSelectLocalFile = btnSelectLocalFile,
+                BtnTransferFile = btnTransferFile,
+                ComboBoxHosts = comboBoxHosts
                 };
 
             SCPTransferFormHelpers.ToggleHostUIElements(false, hostUIElements);
@@ -179,9 +191,7 @@ namespace SCPFileTransferApp
                 MessageBox.Show("Please select both local and remote paths.");
                 return;
                 }
-            btnTransferFile.Enabled = false;
-            comboBoxHosts.Enabled = false;
-            SCPTransferFormHelpers.ToggleHostUIElements(false, hostUIElements);
+            SCPTransferFormHelpers.ToggleDisabledDuringTransferUIElements(false, disabledDuringTransferElements);
             try
                 {
                 if (transferMode == TransferMode.TransferTo)
@@ -210,9 +220,7 @@ namespace SCPFileTransferApp
                 }
             finally
                 {
-                btnTransferFile.Enabled = true;
-                comboBoxHosts.Enabled = true;
-                SCPTransferFormHelpers.ToggleHostUIElements(true, hostUIElements);
+                SCPTransferFormHelpers.ToggleDisabledDuringTransferUIElements(true, disabledDuringTransferElements);
                 }
             }
 
