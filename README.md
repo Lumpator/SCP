@@ -2,6 +2,8 @@
 
 SCP File Transfer App is a Windows Forms application that allows users to transfer files between a local machine and a remote server using SCP (Secure Copy Protocol). The app supports both uploading files to a remote server and downloading files from a remote server.
 
+![image](https://github.com/user-attachments/assets/c6edda04-b596-4f08-84bc-de41fdfa52ab)
+
 ## Features
 
 - **Transfer Modes**: Supports two transfer modes - Transfer to (upload) and Transfer from (download).
