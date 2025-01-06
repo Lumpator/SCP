@@ -211,8 +211,7 @@ namespace SCPFileTransferApp
 
                     });
                     MessageBox.Show("File transferred successfully.");
-                    }
-                progressBar.Value = 0;
+                    }       
                 }
             catch (Exception ex)
                 {
@@ -220,6 +219,7 @@ namespace SCPFileTransferApp
                 }
             finally
                 {
+                progressBar.Value = 0;
                 SCPTransferFormHelpers.ToggleDisabledDuringTransferUIElements(true, disabledDuringTransferElements);
                 }
             }

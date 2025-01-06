@@ -92,6 +92,7 @@
             // btnTransferFile
             // 
             btnTransferFile.BackColor = Color.LightGreen;
+            btnTransferFile.FlatStyle = FlatStyle.Flat;
             btnTransferFile.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnTransferFile.Location = new Point(369, 460);
             btnTransferFile.Name = "btnTransferFile";

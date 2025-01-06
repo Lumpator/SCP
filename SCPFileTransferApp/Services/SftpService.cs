@@ -48,22 +48,28 @@ namespace SCPFileTransferApp.Services
             using (var fileStream = File.OpenRead(localFilePath))
                 {
                 long fileSize = fileStream.Length;
+                var taskCompletionSource = new TaskCompletionSource<bool>();
 
-                await Task.Run(() =>
+                Action<ulong> uploadCallback = bytesUploaded =>
                 {
-                    var stopwatch = new System.Diagnostics.Stopwatch();
-                    stopwatch.Start();
+                    double progress = (double)bytesUploaded / fileSize * 100;
+                    progressCallback(progress);
+                };
 
-                    sftpClient.UploadFile(fileStream, remoteDirectoryPath + "/" + Path.GetFileName(localFilePath), (uploaded) =>
-                    {
-                        if (stopwatch.ElapsedMilliseconds >= 1) // Update UI every 1 millisecond to avoid freezing UI
-                            {
-                            double progress = (double)uploaded / fileSize * 100;
-                            progressCallback(progress);
-                            stopwatch.Restart();
-                            }
-                    });
-                });
+                IAsyncResult asyncResult = sftpClient.BeginUploadFile(fileStream, remoteDirectoryPath + "/" + Path.GetFileName(localFilePath), (result) =>
+                {
+                    try
+                        {
+                        sftpClient.EndUploadFile(result);
+                        taskCompletionSource.TrySetResult(true);
+                        }
+                    catch (Exception ex)
+                        {
+                        taskCompletionSource.TrySetException(ex);
+                        }
+                }, null, uploadCallback);
+
+                await taskCompletionSource.Task;
                 }
             }
         public async Task DownloadFileAsync(string remoteFilePath, string localDirectoryPath, Action<double> progressCallback)
@@ -72,19 +78,28 @@ namespace SCPFileTransferApp.Services
             using (var fileStream = new FileStream(localFilePath, FileMode.Create))
                 {
                 var fileSize = sftpClient.GetAttributes(remoteFilePath).Size;
-                var buffer = new byte [1024 * 1024]; // 1MB buffer
-                int bytesRead;
-                double totalBytesRead = 0;
+                var taskCompletionSource = new TaskCompletionSource<bool>();
 
-                using (var remoteStream = sftpClient.OpenRead(remoteFilePath))
-                    {
-                    while ((bytesRead = await remoteStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                Action<ulong> downloadCallback = bytesDownloaded =>
+                {
+                    double progress = (double)bytesDownloaded / fileSize * 100;
+                    progressCallback(progress);
+                };
+
+                IAsyncResult asyncResult = sftpClient.BeginDownloadFile(remoteFilePath, fileStream, (result) =>
+                {
+                    try
                         {
-                        await fileStream.WriteAsync(buffer, 0, bytesRead);
-                        totalBytesRead += bytesRead;
-                        progressCallback?.Invoke((totalBytesRead / fileSize) * 100);
+                        sftpClient.EndDownloadFile(result);
+                        taskCompletionSource.TrySetResult(true);
                         }
-                    }
+                    catch (Exception ex)
+                        {
+                        taskCompletionSource.TrySetException(ex);
+                        }
+                }, null, downloadCallback);
+
+                await taskCompletionSource.Task;
                 }
             }
         public SftpFileAttributes GetFileAttributes(string remoteFilePath)
