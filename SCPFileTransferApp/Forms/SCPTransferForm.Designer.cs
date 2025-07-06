@@ -499,7 +499,7 @@
             Controls.Add(listViewVmList);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             Icon = ((System.Drawing.Icon)resources.GetObject("$this.Icon"));
-            Text = "SCP File Transfer";
+            Text = "VMs Dashboard";
             ((System.ComponentModel.ISupportInitialize)pictureBoxSSHStatus).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBoxPingStatus).EndInit();
             panelDragDrop.ResumeLayout(false);

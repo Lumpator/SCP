@@ -1,67 +1,100 @@
-# SCP File Transfer App
+# VMs Dashboard App
 
-SCP File Transfer App is a Windows Forms application that allows users to transfer files between a local machine and a remote server using SCP (Secure Copy Protocol). The app supports both uploading files to a remote server and downloading files from a remote server.
-
-![image](https://github.com/user-attachments/assets/c6edda04-b596-4f08-84bc-de41fdfa52ab)
+A Windows desktop application for secure file transfer and remote management of virtual machines (VMs) over SSH/SFTP. 
 
 ## Features
 
-- **Transfer Modes**: Supports two transfer modes - Transfer to (upload) and Transfer from (download).
-- **Host Management**: Load and manage multiple remote hosts from a JSON configuration file.
-- **Ping and SSH Check**: Automatically checks the connectivity and SSH availability of the selected host.
-- **Remote Directory Browsing**: Browse remote directories and files using a tree view.
-- **Drag and Drop**: Supports drag and drop for selecting local files in "Transfer to" mode.
-- **Progress Bar**: Displays the progress of file transfer operations.
-- **SSH Console**: Open an SSH console to the selected host.
+### VM Management
+- **VM List**: Load and display a list of VMs from a configurable `hosts.json` file.
+- **Ping & SSH Status**: Check connectivity and SSH availability for each VM, with visual status icons.
+- **Remote SSH Console**: Open an SSH console to any VM with a single click.
 
-## Prerequisites
+### File Transfer
+- **Transfer Modes**: Transfer files to or from remote VMs using SFTP.
+- **Drag & Drop**: Drag and drop files for upload in "Transfer to" mode.
+- **Directory Browsing**: Browse and select local and remote directories/files using UI dialogs and tree views.
+- **Progress Bar**: Visual progress for file transfers.
+- **Transfer Status**: Status list for ongoing and completed transfers, with color-coded feedback.
 
-- .NET Framework 4.7.2 or later
-- A JSON configuration file (`hosts.json`) containing the remote host information
+### Jenkins Pipeline Integration
+- **Pipeline List**: Load available Jenkins pipelines from `pipelines.json`.
+- **Remote Download**: Download pipeline artifacts directly to a selected VM directory via SSH.
 
-## Usage
+### Application Version Management
+- **Installed Apps Overview**: Display a table of installed applications and their versions for each VM.
+- **Reload VM Information**: Refresh and retrieve the latest installed app versions and VM details (hostname, OS, IP).
+- **Automatic App Version Detection**:
+  - Uses `winget` if available (with auto-acceptance of source agreements).
+  - Falls back to PowerShell registry queries if `winget` is not present.
+  - Handles both 64-bit and 32-bit registry locations.
 
-1. Run the application.
+## Configuration Files
+- `hosts.json`: List of VMs/hosts to manage.
+- `apps.json`: List of applications to check for version info on each VM.
+- `pipelines.json`: Jenkins pipeline definitions for remote downloads.
 
-2. Load the hosts by ensuring the `hosts.json` file is in the application's base directory. The file should have the following structure:
-```  
+## Example Configuration Files
+
+### hosts.json
+```json
 [
-    {
-        "Name": "Host1",
-        "Host": "hostname1",
-        "Username": "user1",
-        "Password": "password1"
-    },
-    {
-        "Name": "Host2",
-        "Host": "hostname2",
-        "Username": "user2",
-        "Password": "password2"
-    }
+  {
+    "Name": "vm1",
+    "Host": "192.168.1.101",
+    "Username": "admin",
+    "Password": "your_password"
+  },
+  {
+    "Name": "vm2",
+    "Host": "192.168.1.102",
+    "Username": "user",
+    "Password": "your_password"
+  }
 ]
 ```
-4. Select a host from the dropdown list. The app will automatically check the connectivity and SSH availability of the selected host.
 
-5. Choose the transfer mode (Transfer to or Transfer from) using the mode dropdown.
+### apps.json
+```json
+[
+  { "DisplayName": "App1", "WingetName": "App1 full name" },
+  { "DisplayName": "App2", "WingetName": "App2 full name" },
+  { "DisplayName": "App3", "WingetName": "App3 full name" },
+  { "DisplayName": "App4", "WingetName": "App4 full name" },
+  { "DisplayName": "App5", "WingetName": "App5 full name" }
+]
+```
 
-6. Select the local file or directory:
-    - For "Transfer to" mode, click "Browse Local Files" to select a file.
-    - For "Transfer from" mode, click "Browse Local Directories" to select a directory.
+### pipelines.json
+```json
+{
+  "Pipeline1": "https://jenkins.example.com/job/pipeline1/lastSuccessfulBuild/artifact/output.zip",
+  "Pipeline2": "https://jenkins.example.com/job/pipeline2/lastSuccessfulBuild/artifact/app.exe"
+}
+```
 
-7. Select the remote directory or file:
-    - For "Transfer to" mode, browse the remote directories and select a directory.
-    - For "Transfer from" mode, browse the remote files and select a file.
+## Requirements
+- Windows 10/11
+- .NET 8.0 or newer
+- SSH access to target VMs
+- For app version detection: `winget` (App Installer) or PowerShell access
 
-8. Click the "Transfer" button to start the file transfer. The progress bar will display the transfer progress.
+## How It Works
+1. **Load Hosts**: Reads `hosts.json` and populates the VM list.
+2. **Select VM**: Checks ping/SSH, displays installed apps, and enables file transfer controls.
+3. **Transfer Files**: Choose transfer mode, select files/directories, and start transfer with progress feedback.
+4. **Jenkins Download**: Select a pipeline and target directory, then download artifacts directly to the VM.
+5. **App Version Detection**: On reload, retrieves app versions using `winget` or PowerShell registry queries.
 
-9. Optionally, open an SSH console to the selected host by clicking the "SSH Console" button.
+## Troubleshooting
+- **winget Not Installed**: The app will automatically fall back to PowerShell registry queries for app version detection.
+- **winget Prompts for Agreements**: The app pre-accepts agreements to avoid blocking automation.
+- **Missing App Data**: Ensure the remote VM has PowerShell and registry access enabled.
+- **SSH/Network Issues**: Check VM network/firewall settings and SSH credentials.
+
+## Extending
+- Add new VMs to `hosts.json`.
+- Add new apps to `apps.json` for version tracking.
+- Add new Jenkins pipelines to `pipelines.json`.
 
 ## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
-## Acknowledgements
-
-- [Renci.SshNet](https://github.com/sshnet/SSH.NET) - A Secure Shell (SSH) library for .NET, used for SSH and SFTP operations.
-- [Newtonsoft.Json](https://www.newtonsoft.com/json) - A popular high-performance JSON framework for .NET.
-- [FlatIcon](https://www.flaticon.com/free-icons/transfer) - Transfer icons created by Design Circle - Flaticon
+MIT License
