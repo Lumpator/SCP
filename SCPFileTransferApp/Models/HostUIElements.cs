@@ -12,5 +12,7 @@ namespace SCPFileTransferApp.Models
         public required TextBox TxtRemoteDirectoryPath { get; set; }
         public required TreeView TreeViewRemoteDirectories { get; set; }
         public required Button BtnSelectRemoteDirectory { get; set; }
+        public required Button BtnJenkinsDownload { get; set; }
+        
         }
     }

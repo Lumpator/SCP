@@ -11,6 +11,9 @@
 
   <ItemGroup>
     <None Remove="Forms\SCPTransfer" />
+    <None Update="pipelines.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

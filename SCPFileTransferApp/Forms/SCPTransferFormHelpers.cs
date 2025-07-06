@@ -71,6 +71,7 @@ namespace SCPFileTransferApp.Helpers
             hostUIElements.TxtRemoteDirectoryPath.Enabled = enabled;
             hostUIElements.TreeViewRemoteDirectories.Enabled = enabled;
             hostUIElements.BtnSelectRemoteDirectory.Enabled = enabled;
+            hostUIElements.BtnJenkinsDownload.Enabled = enabled;
             }
         public static void ToggleDisabledDuringTransferUIElements(bool enabled, DisabledDuringTransferElements UIElements)
             {
