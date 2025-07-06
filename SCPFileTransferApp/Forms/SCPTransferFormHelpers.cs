@@ -214,24 +214,27 @@ namespace SCPFileTransferApp.Helpers
             List<AppInfo> apps)
         {
             var installedAppVersions = new List<InstalledAppVersion>();
-            bool hasWinget = IsWingetInstalled(sshService);
-            if (hasWinget)
-            {
-                // Pre-accept agreements to avoid blocking prompt
-                try
-                {
-                    await Task.Run(() => sshService.RunCommand("winget list --accept-source-agreements"));
-                }
-                catch { /* ignore errors here */ }
-            }
-
             foreach (var app in apps)
             {
                 string version = "Not found";
                 try
                 {
                     string output = null;
-                    if (hasWinget)
+                    // Získání verze z registrů pro všechny uživatele i aktuálního uživatele (HKLM i HKCU, 32/64bit)
+                    string psScript =
+                        $@"$results = @(); " +
+                        $@"$results += Get-ItemProperty 'HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*' -ErrorAction SilentlyContinue; " +
+                        $@"$results += Get-ItemProperty 'HKLM:\\Software\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*' -ErrorAction SilentlyContinue; " +
+                        $@"$results += Get-ItemProperty 'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*' -ErrorAction SilentlyContinue; " +
+                        $@"$results | Where-Object {{$_.DisplayName -like '*{app.WingetName}*'}} | Select-Object -ExpandProperty DisplayVersion | Out-String";
+                    output = sshService.RunCommand($"powershell -Command \"{psScript}\"");
+                    if (!string.IsNullOrWhiteSpace(output))
+                    {
+                        version = output.Trim().Split('\n').FirstOrDefault()?.Trim() ?? "Not found";
+                    }
+                    /*
+                    // Fallback na winget (momentálně zakomentováno)
+                    if (string.IsNullOrWhiteSpace(output) && hasWinget)
                     {
                         output = await Task.Run(() => sshService.RunCommand($"winget list \"{app.WingetName}\" --accept-source-agreements"));
                         if (!string.IsNullOrWhiteSpace(output))
@@ -251,41 +254,22 @@ namespace SCPFileTransferApp.Helpers
                                             break;
                                         }
                                     }
-                                    break;
                                 }
-                            }
-                            foreach (var line in lines)
-                            {
-                                if (line.Contains(app.WingetName))
+                                else if (versionIndex != -1)
                                 {
                                     var parts = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                                    if (versionIndex >= 0 && parts.Length > versionIndex)
+                                    if (parts.Length > versionIndex)
+                                    {
                                         version = parts[versionIndex];
-                                    else if (parts.Length > 0)
-                                        version = parts[^1];
+                                        break;
+                                    }
                                 }
                             }
                         }
                     }
-                    else
-                    {
-                        // Fallback: Try PowerShell registry query
-                        output = await Task.Run(() => sshService.RunCommand($"powershell -Command \"Get-ItemProperty HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\* | Where-Object {{$_.DisplayName -like '*{app.WingetName}*'}} | Select-Object -ExpandProperty DisplayVersion\""));
-                        if (string.IsNullOrWhiteSpace(output))
-                        {
-                            // Try 32-bit registry
-                            output = await Task.Run(() => sshService.RunCommand($"powershell -Command \"Get-ItemProperty HKLM:\\Software\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\* | Where-Object {{$_.DisplayName -like '*{app.WingetName}*'}} | Select-Object -ExpandProperty DisplayVersion\""));
-                        }
-                        if (!string.IsNullOrWhiteSpace(output))
-                        {
-                            version = output.Trim().Split('\n').FirstOrDefault()?.Trim() ?? "Not found";
-                        }
-                    }
+                    */
                 }
-                catch
-                {
-                    version = "Error";
-                }
+                catch { /* ignore errors here */ }
                 installedAppVersions.Add(new InstalledAppVersion { DisplayName = app.DisplayName, Version = version });
             }
 

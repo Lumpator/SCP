@@ -1,9 +1,9 @@
 ﻿[
-  { "DisplayName": "Git", "WingetName": "Git.Git" },
-  { "DisplayName": "Google Chrome", "WingetName": "Google.Chrome" },
-  { "DisplayName": "Visual Studio Code", "WingetName": "Microsoft.VisualStudioCode" },
-  { "DisplayName": "Spotify", "WingetName": "Spotify.Spotify" },
-  { "DisplayName": "Slack", "WingetName": "SlackTechnologies.Slack" },
-  { "DisplayName": "Node.js", "WingetName": "OpenJS.NodeJS" },
-  { "DisplayName": "7-Zip", "WingetName": "7zip.7zip" }
+  { "DisplayName": "Git", "WingetName": "Git" },
+  { "DisplayName": "Google Chrome", "WingetName": "Google Chrome" },
+  { "DisplayName": "Visual Studio Code", "WingetName": "Visual Studio Code" },
+  { "DisplayName": "Spotify", "WingetName": "Spotify" },
+  { "DisplayName": "Samepage", "WingetName": "Samepage" },
+  { "DisplayName": "Node.js", "WingetName": "NodeJS" },
+  { "DisplayName": "7-Zip", "WingetName": "7 zip" }
 ]
