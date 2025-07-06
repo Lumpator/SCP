@@ -1,9 +1,9 @@
 ﻿[
-  { "DisplayName": "Git", "WingetName": "Git" },
-  { "DisplayName": "MaM 6", "WingetName": "Might and Magic 6 - The Mandate of Heaven" },
-  { "DisplayName": "The Sims", "WingetName": "The Sims Deluxe Edition" },
-  { "DisplayName": "Samepage", "WingetName": "Samepage" },
-  { "DisplayName": "Node.js", "WingetName": "Node.js" },
-  { "DisplayName": "Prdel", "WingetName": "Prdel" }
+  { "DisplayName": "Git", "WingetName": "Git.Git" },
+  { "DisplayName": "Google Chrome", "WingetName": "Google.Chrome" },
+  { "DisplayName": "Visual Studio Code", "WingetName": "Microsoft.VisualStudioCode" },
+  { "DisplayName": "Spotify", "WingetName": "Spotify.Spotify" },
+  { "DisplayName": "Slack", "WingetName": "SlackTechnologies.Slack" },
+  { "DisplayName": "Node.js", "WingetName": "OpenJS.NodeJS" },
+  { "DisplayName": "7-Zip", "WingetName": "7zip.7zip" }
 ]
-
