@@ -21,7 +21,8 @@ namespace SCPFileTransferApp.Services
             if (!File.Exists(_filePath))
                 return new List<InstalledVersionsInfo>();
             var json = File.ReadAllText(_filePath);
-            return JsonConvert.DeserializeObject<List<InstalledVersionsInfo>>(json) ?? new List<InstalledVersionsInfo>();
+            return JsonConvert.DeserializeObject<List<InstalledVersionsInfo>>(json) ??
+                   new List<InstalledVersionsInfo>();
         }
 
         public InstalledVersionsInfo GetLatestForHost(string host)
@@ -38,10 +39,10 @@ namespace SCPFileTransferApp.Services
             {
                 all.Remove(existing);
             }
+
             all.Add(info);
             var json = JsonConvert.SerializeObject(all, Formatting.Indented);
             File.WriteAllText(_filePath, json);
         }
     }
 }
-

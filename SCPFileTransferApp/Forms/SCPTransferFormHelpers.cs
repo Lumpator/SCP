@@ -202,7 +202,8 @@ namespace SCPFileTransferApp.Helpers
             try
             {
                 var output = sshService.RunCommand("winget --version");
-                return !string.IsNullOrWhiteSpace(output) && !output.Contains("not recognized", StringComparison.OrdinalIgnoreCase);
+                return !string.IsNullOrWhiteSpace(output) &&
+                       !output.Contains("not recognized", StringComparison.OrdinalIgnoreCase);
             }
             catch
             {
@@ -269,7 +270,11 @@ namespace SCPFileTransferApp.Helpers
                     }
                     */
                 }
-                catch { /* ignore errors here */ }
+                catch
+                {
+                    /* ignore errors here */
+                }
+
                 installedAppVersions.Add(new InstalledAppVersion { DisplayName = app.DisplayName, Version = version });
             }
 
