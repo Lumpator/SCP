@@ -47,8 +47,6 @@
             txtVmName = new System.Windows.Forms.TextBox();
             label1 = new System.Windows.Forms.Label();
             treeViewRemoteDirectories = new System.Windows.Forms.TreeView();
-            txtVmType = new System.Windows.Forms.TextBox();
-            label2 = new System.Windows.Forms.Label();
             txtVmIp = new System.Windows.Forms.TextBox();
             txtLocalFilePath = new System.Windows.Forms.TextBox();
             label3 = new System.Windows.Forms.Label();
@@ -249,26 +247,9 @@
             treeViewRemoteDirectories.BeforeExpand += treeViewRemoteDirectories_BeforeExpand;
             treeViewRemoteDirectories.AfterSelect += treeViewRemoteDirectories_AfterSelect;
             // 
-            // txtVmType
-            // 
-            txtVmType.Location = new System.Drawing.Point(132, 35);
-            txtVmType.Name = "txtVmType";
-            txtVmType.ReadOnly = true;
-            txtVmType.Size = new System.Drawing.Size(120, 23);
-            txtVmType.TabIndex = 23;
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new System.Drawing.Point(132, 17);
-            label2.Name = "label2";
-            label2.Size = new System.Drawing.Size(32, 15);
-            label2.TabIndex = 24;
-            label2.Text = "Type";
-            // 
             // txtVmIp
             // 
-            txtVmIp.Location = new System.Drawing.Point(259, 35);
+            txtVmIp.Location = new System.Drawing.Point(132, 35);
             txtVmIp.Name = "txtVmIp";
             txtVmIp.ReadOnly = true;
             txtVmIp.Size = new System.Drawing.Size(120, 23);
@@ -284,7 +265,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new System.Drawing.Point(259, 17);
+            label3.Location = new System.Drawing.Point(132, 19);
             label3.Name = "label3";
             label3.Size = new System.Drawing.Size(62, 15);
             label3.TabIndex = 26;
@@ -305,11 +286,10 @@
             // 
             // txtVmOs
             // 
-            txtVmOs.Location = new System.Drawing.Point(392, 35);
-            txtVmOs.Multiline = true;
+            txtVmOs.Location = new System.Drawing.Point(259, 36);
             txtVmOs.Name = "txtVmOs";
             txtVmOs.ReadOnly = true;
-            txtVmOs.Size = new System.Drawing.Size(120, 82);
+            txtVmOs.Size = new System.Drawing.Size(256, 23);
             txtVmOs.TabIndex = 27;
             // 
             // progressBar
@@ -322,7 +302,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new System.Drawing.Point(392, 17);
+            label4.Location = new System.Drawing.Point(259, 16);
             label4.Name = "label4";
             label4.Size = new System.Drawing.Size(21, 15);
             label4.TabIndex = 28;
@@ -355,7 +335,7 @@
             dgvInstalledVersions.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvInstalledVersions.Location = new System.Drawing.Point(6, 86);
             dgvInstalledVersions.Name = "dgvInstalledVersions";
-            dgvInstalledVersions.Size = new System.Drawing.Size(373, 196);
+            dgvInstalledVersions.Size = new System.Drawing.Size(509, 196);
             dgvInstalledVersions.TabIndex = 29;
             // 
             // lblFileSize
@@ -415,7 +395,7 @@
             // 
             // btnReloadVmInformation
             // 
-            btnReloadVmInformation.Location = new System.Drawing.Point(304, 303);
+            btnReloadVmInformation.Location = new System.Drawing.Point(440, 302);
             btnReloadVmInformation.Name = "btnReloadVmInformation";
             btnReloadVmInformation.Size = new System.Drawing.Size(75, 23);
             btnReloadVmInformation.TabIndex = 34;
@@ -434,7 +414,7 @@
             // 
             // btnJenkinsDownload
             // 
-            btnJenkinsDownload.Location = new System.Drawing.Point(304, 405);
+            btnJenkinsDownload.Location = new System.Drawing.Point(440, 405);
             btnJenkinsDownload.Name = "btnJenkinsDownload";
             btnJenkinsDownload.Size = new System.Drawing.Size(75, 23);
             btnJenkinsDownload.TabIndex = 36;
@@ -447,7 +427,7 @@
             listViewStatus.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { Status });
             listViewStatus.Location = new System.Drawing.Point(6, 435);
             listViewStatus.Name = "listViewStatus";
-            listViewStatus.Size = new System.Drawing.Size(373, 169);
+            listViewStatus.Size = new System.Drawing.Size(509, 169);
             listViewStatus.TabIndex = 37;
             listViewStatus.UseCompatibleStateImageBehavior = false;
             listViewStatus.View = System.Windows.Forms.View.List;
@@ -456,7 +436,7 @@
             // 
             Status.Name = "Status";
             Status.Text = "";
-            Status.Width = 285;
+            Status.Width = 370;
             // 
             // groupBox1
             // 
@@ -473,8 +453,6 @@
             groupBox1.Controls.Add(txtVmOs);
             groupBox1.Controls.Add(label3);
             groupBox1.Controls.Add(txtVmIp);
-            groupBox1.Controls.Add(label2);
-            groupBox1.Controls.Add(txtVmType);
             groupBox1.Controls.Add(label1);
             groupBox1.Controls.Add(txtVmName);
             groupBox1.Controls.Add(comboBoxPipelines);
@@ -576,8 +554,6 @@
         private System.Windows.Forms.TextBox txtVmOs;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox txtVmIp;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox txtVmType;
         private System.Windows.Forms.Button btnReloadVmInformation;
         private System.Windows.Forms.TextBox txtLastVmInstalledVersionReload;
         private System.Windows.Forms.Label label7;

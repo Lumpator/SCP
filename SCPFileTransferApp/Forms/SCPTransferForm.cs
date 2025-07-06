@@ -143,21 +143,19 @@ namespace SCPFileTransferApp
             string url = pipelineRepository.Pipelines[selectedPipeline];
             string vmName = hosts[listViewVmList.SelectedIndices[0]].Name;
 
-            // Přidání řádku do ListView
             int rowIndex = AddStatusRow($"Downloading {selectedPipeline} to {vmName}...", Color.LightYellow);
 
-            try
+            bool result = await SCPTransferFormHelpers.DownloadPipelineToRemoteAsync(
+                sshService, url, remoteDirectoryPath, progress => { /* Optionally handle progress */ });
+
+            if (result)
             {
-                await sshService.DownloadFileOnRemoteAsync(url, remoteDirectoryPath, progress =>
-                {
-                    /* případně progress */
-                });
                 UpdateStatusRow(rowIndex, $"Downloaded {selectedPipeline} to {vmName}", Color.LightGreen);
             }
-            catch (Exception ex)
+            else
             {
                 UpdateStatusRow(rowIndex, $"Error: {selectedPipeline} do {vmName}", Color.Red);
-                MessageBox.Show("Download error: " + ex.Message);
+                MessageBox.Show("Download error.");
             }
         }
 
@@ -165,14 +163,12 @@ namespace SCPFileTransferApp
         {
             if (transferMode == TransferMode.TransferTo)
             {
-                using (OpenFileDialog openFileDialog = new OpenFileDialog())
+                var selectedFile = SCPTransferFormHelpers.SelectLocalFileAndGetPath();
+                if (!string.IsNullOrEmpty(selectedFile))
                 {
-                    if (openFileDialog.ShowDialog() == DialogResult.OK)
-                    {
-                        localFilePath = openFileDialog.FileName;
-                        txtLocalFilePath.Text = localFilePath;
-                        SCPTransferFormHelpers.UpdateFileSizeLabel(lblFileSize, localFilePath);
-                    }
+                    localFilePath = selectedFile;
+                    txtLocalFilePath.Text = localFilePath;
+                    SCPTransferFormHelpers.UpdateFileSizeLabel(lblFileSize, localFilePath);
                 }
             }
             else if (transferMode == TransferMode.TransferFrom)
@@ -434,7 +430,7 @@ namespace SCPFileTransferApp
             // Překrytí DataGridView hláškou
             var overlay = new Label
             {
-                Text = "Probíhá aktualizace dat...",
+                Text = "Updating Data...",
                 TextAlign = ContentAlignment.MiddleCenter,
                 Dock = DockStyle.Fill,
                 BackColor = Color.FromArgb(200, Color.LightGray),
@@ -463,60 +459,13 @@ namespace SCPFileTransferApp
                 }
 
                 // Získání hostname a OS přes SSH
-                string vmName = await Task.Run(() => sshService.RunCommand("hostname"));
-                string vmOs = await Task.Run(() => sshService.RunCommand("ver"));
                 var selectedHost = listViewVmList.SelectedItems.Count > 0 ? (HostInfo)listViewVmList.SelectedItems[0].Tag : null;
-                string vmIp = selectedHost?.Host ?? string.Empty;
-                txtVmName.Text = vmName.Trim();
+                var (vmName, vmOs, vmIp) = await SCPTransferFormHelpers.GetVmInfoAsync(sshService, selectedHost);
+                txtVmName.Text = vmName;
                 txtVmIp.Text = vmIp;
-                txtVmOs.Text = vmOs.Trim();
+                txtVmOs.Text = vmOs;
 
-                var installedAppVersions = new List<InstalledAppVersion>();
-                foreach (var app in apps)
-                {
-                    string version = "Not found";
-                    try
-                    {
-                        string output = await Task.Run(() => sshService.RunCommand($"winget list \"{app.WingetName}\""));
-                        if (!string.IsNullOrWhiteSpace(output))
-                        {
-                            var lines = output.Split('\n');
-                            int versionIndex = -1;
-                            foreach (var line in lines)
-                            {
-                                if (line.Trim().StartsWith("Name") && line.Contains("Version"))
-                                {
-                                    var headerParts = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                                    for (int i = 0; i < headerParts.Length; i++)
-                                    {
-                                        if (headerParts[i].Equals("Version", StringComparison.OrdinalIgnoreCase))
-                                        {
-                                            versionIndex = i;
-                                            break;
-                                        }
-                                    }
-                                    break;
-                                }
-                            }
-                            foreach (var line in lines)
-                            {
-                                if (line.Contains(app.WingetName))
-                                {
-                                    var parts = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                                    if (versionIndex >= 0 && parts.Length > versionIndex)
-                                        version = parts[versionIndex];
-                                    else if (parts.Length > 0)
-                                        version = parts[^1];
-                                }
-                            }
-                        }
-                    }
-                    catch
-                    {
-                        version = "Error";
-                    }
-                    installedAppVersions.Add(new InstalledAppVersion { DisplayName = app.DisplayName, Version = version });
-                }
+                var installedAppVersions = await SCPTransferFormHelpers.GetInstalledAppVersionsAsync(sshService, apps);
 
                 // Uložení nových hodnot do repository včetně VM info
                 if (selectedHost != null)
