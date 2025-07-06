@@ -55,6 +55,17 @@ namespace SCPFileTransferApp.Services
                 }
             }
             
+            public string RunCommand(string command)
+            {
+                using (var client = new Renci.SshNet.SshClient(hostInfo.Host, hostInfo.Username, hostInfo.Password))
+                {
+                    client.Connect();
+                    var result = client.RunCommand(command);
+                    client.Disconnect();
+                    return result.Result;
+                }
+            }
+            
             public async Task DownloadFileOnRemoteAsync(string url, string remoteDirectory, Action<double> progressCallback)
             {
                 await Task.Run(() =>

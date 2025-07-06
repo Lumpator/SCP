@@ -2,6 +2,9 @@ using SCPFileTransferApp.Helpers;
 using SCPFileTransferApp.Models;
 using SCPFileTransferApp.Services;
 using static SCPFileTransferApp.Models.Enums;
+using System.IO;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace SCPFileTransferApp
 {
@@ -18,6 +21,7 @@ namespace SCPFileTransferApp
         private PipelineRepository pipelineRepository;
         private TransferModeUIElements transferModeUIElements;
         private DisabledDuringTransferElements disabledDuringTransferElements;
+        private InstalledVersionsRepository installedVersionsRepository;
 
 
         public SCPTransferForm()
@@ -25,9 +29,10 @@ namespace SCPFileTransferApp
             InitializeComponent();
             networkService = new NetworkService();
             hosts = SCPTransferFormHelpers.LoadHosts();
-            PopulateHostsComboBox(hosts);
+            PopulateVmListView(hosts);
             pipelineRepository = new PipelineRepository();
             PopulatePipelinesComboBox();
+            installedVersionsRepository = new InstalledVersionsRepository();
 
             hostUIElements = new HostUIElements
             {
@@ -35,7 +40,8 @@ namespace SCPFileTransferApp
                 TxtRemoteDirectoryPath = txtRemoteDirectoryPath,
                 TreeViewRemoteDirectories = treeViewRemoteDirectories,
                 BtnSelectRemoteDirectory = btnSelectRemoteDirectory,
-                BtnJenkinsDownload = btnJenkinsDownload
+                BtnJenkinsDownload = btnJenkinsDownload,
+                BtnReloadVmInformation = btnReloadVmInformation
             };
 
             transferModeUIElements = new TransferModeUIElements
@@ -44,7 +50,8 @@ namespace SCPFileTransferApp
                 LblFileSize = lblFileSize,
                 BtnTransferFile = btnTransferFile,
                 BtnSelectLocalFile = btnSelectLocalFile,
-                BtnSelectRemoteDirectory = btnSelectRemoteDirectory
+                BtnSelectRemoteDirectory = btnSelectRemoteDirectory,
+                HostsListView = listViewVmList
             };
 
             disabledDuringTransferElements = new DisabledDuringTransferElements
@@ -55,34 +62,63 @@ namespace SCPFileTransferApp
                 BtnSelectRemoteDirectory = btnSelectRemoteDirectory,
                 BtnSelectLocalFile = btnSelectLocalFile,
                 BtnTransferFile = btnTransferFile,
-                ComboBoxHosts = comboBoxHosts
+                HostsListView = listViewVmList
             };
-
+            
             SCPTransferFormHelpers.ToggleHostUIElements(false, hostUIElements);
             comboBoxMode.SelectedIndex = 0; // 0 = Transfer to, 1 = Transfer from          
         }
 
 
-        private async void comboBoxHosts_SelectedIndexChanged(object sender, EventArgs e)
+        private void ShowInstalledVersionsForHost(string host)
         {
-            if (comboBoxHosts.SelectedIndex >= 0)
+            var info = installedVersionsRepository.GetLatestForHost(host);
+            if (info != null)
             {
-                SCPTransferFormHelpers.ToggleHostUIElements(false, hostUIElements);
-                comboBoxHosts.Enabled = false;
+                txtLastVmInstalledVersionReload.Text = info.LastChecked.ToString("yyyy-MM-dd HH:mm:ss");
+                dgvInstalledVersions.DataSource = null;
+                dgvInstalledVersions.AutoGenerateColumns = true;
+                dgvInstalledVersions.DataSource = info.Apps;
+                dgvInstalledVersions.AutoResizeColumns();
+                dgvInstalledVersions.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                // Zobrazit informace o VM
+                txtVmName.Text = info.VmName ?? string.Empty;
+                txtVmIp.Text = info.VmIp ?? string.Empty;
+                txtVmOs.Text = info.VmOs ?? string.Empty;
+            }
+            else
+            {
+                txtLastVmInstalledVersionReload.Text = "N/A";
+                dgvInstalledVersions.DataSource = null;
+                txtVmName.Text = string.Empty;
+                txtVmIp.Text = string.Empty;
+                txtVmOs.Text = string.Empty;
+            }
+        }
+
+        private async void listViewVmList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listViewVmList.SelectedItems.Count > 0)
+            {
+                listViewVmList.Enabled = false;
                 txtRemoteDirectoryPath.Clear();
                 treeViewRemoteDirectories.Nodes.Clear();
                 remoteDirectoryPath = null;
-                var selectedHost = hosts[comboBoxHosts.SelectedIndex];
+                var selectedHost = (HostInfo)listViewVmList.SelectedItems[0].Tag;
+                ShowInstalledVersionsForHost(selectedHost.Name);
                 await CheckPingAndSSHAsync(selectedHost);
             }
             else
             {
                 SCPTransferFormHelpers.ToggleHostUIElements(false, hostUIElements);
                 SCPTransferFormHelpers.UpdateStatusIcons(false, false, pictureBoxPingStatus, pictureBoxSSHStatus);
+                txtLastVmInstalledVersionReload.Text = "";
+                dgvInstalledVersions.DataSource = null;
             }
-            comboBoxHosts.Enabled = true;
+
+            listViewVmList.Enabled = true; // Opětovné povolení výběru
         }
-        
+
         private async void btnJenkinsDownload_Click(object sender, EventArgs e)
         {
             if (comboBoxPipelines.SelectedIndex < 0)
@@ -90,11 +126,13 @@ namespace SCPFileTransferApp
                 MessageBox.Show("Select a pipeline.");
                 return;
             }
+
             if (string.IsNullOrEmpty(remoteDirectoryPath))
             {
                 MessageBox.Show("Select a target directory on the VM.");
                 return;
             }
+
             if (sshService == null)
             {
                 MessageBox.Show("No host selected.");
@@ -103,14 +141,17 @@ namespace SCPFileTransferApp
 
             string selectedPipeline = comboBoxPipelines.SelectedItem.ToString();
             string url = pipelineRepository.Pipelines[selectedPipeline];
-            string vmName = hosts[comboBoxHosts.SelectedIndex].Name;
-            
+            string vmName = hosts[listViewVmList.SelectedIndices[0]].Name;
+
             // Přidání řádku do ListView
             int rowIndex = AddStatusRow($"Downloading {selectedPipeline} to {vmName}...", Color.LightYellow);
 
             try
             {
-                await sshService.DownloadFileOnRemoteAsync(url, remoteDirectoryPath, progress => { /* případně progress */ });
+                await sshService.DownloadFileOnRemoteAsync(url, remoteDirectoryPath, progress =>
+                {
+                    /* případně progress */
+                });
                 UpdateStatusRow(rowIndex, $"Downloaded {selectedPipeline} to {vmName}", Color.LightGreen);
             }
             catch (Exception ex)
@@ -183,6 +224,7 @@ namespace SCPFileTransferApp
                     {
                         node.Nodes.Add("Loading...");
                     }
+
                     e.Node.Nodes.Add(node);
                 }
             }
@@ -234,25 +276,21 @@ namespace SCPFileTransferApp
                 MessageBox.Show("Please select both local and remote paths.");
                 return;
             }
+
             SCPTransferFormHelpers.ToggleDisabledDuringTransferUIElements(false, disabledDuringTransferElements);
             try
             {
                 if (transferMode == TransferMode.TransferTo)
                 {
-                    await sftpService.UploadFileAsync(localFilePath, remoteDirectoryPath, progress =>
-                    {
-                        SCPTransferFormHelpers.UpdateProgressBar(this, progressBar, progress);
-                    });
+                    await sftpService.UploadFileAsync(localFilePath, remoteDirectoryPath,
+                        progress => { SCPTransferFormHelpers.UpdateProgressBar(this, progressBar, progress); });
 
                     MessageBox.Show("File transferred successfully.");
                 }
                 else if (transferMode == TransferMode.TransferFrom)
                 {
-                    await sftpService.DownloadFileAsync(remoteDirectoryPath, localFilePath, progress =>
-                    {
-                        SCPTransferFormHelpers.UpdateProgressBar(this, progressBar, progress);
-
-                    });
+                    await sftpService.DownloadFileAsync(remoteDirectoryPath, localFilePath,
+                        progress => { SCPTransferFormHelpers.UpdateProgressBar(this, progressBar, progress); });
                     MessageBox.Show("File transferred successfully.");
                 }
             }
@@ -277,6 +315,7 @@ namespace SCPFileTransferApp
             {
                 transferMode = TransferMode.TransferFrom;
             }
+
             SCPTransferFormHelpers.UpdateTransferModeUI(transferMode, transferModeUIElements);
         }
 
@@ -288,7 +327,8 @@ namespace SCPFileTransferApp
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to open SSH connection: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Failed to open SSH connection: {ex.Message}", "Error", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
             }
         }
 
@@ -343,18 +383,20 @@ namespace SCPFileTransferApp
             }
         }
 
-        private void PopulateHostsComboBox(List<HostInfo>? hosts)
+        private void PopulateVmListView(List<HostInfo>? hosts)
         {
-            comboBoxHosts.Items.Clear();
+            listViewVmList.Items.Clear();
             if (hosts != null)
             {
                 foreach (var host in hosts)
                 {
-                    comboBoxHosts.Items.Add(host.Name);
+                    var item = new ListViewItem(host.Name);
+                    item.Tag = host;
+                    listViewVmList.Items.Add(item);
                 }
             }
         }
-        
+
         private void PopulatePipelinesComboBox()
         {
             comboBoxPipelines.Items.Clear();
@@ -366,7 +408,7 @@ namespace SCPFileTransferApp
                 }
             }
         }
-        
+
         private int AddStatusRow(string text, Color? backColor = null)
         {
             var item = new ListViewItem(text);
@@ -386,6 +428,121 @@ namespace SCPFileTransferApp
                     item.BackColor = backColor.Value;
             }
         }
-    }
 
+        private async void btnReloadVmInformation_Click(object sender, EventArgs e)
+        {
+            // Překrytí DataGridView hláškou
+            var overlay = new Label
+            {
+                Text = "Probíhá aktualizace dat...",
+                TextAlign = ContentAlignment.MiddleCenter,
+                Dock = DockStyle.Fill,
+                BackColor = Color.FromArgb(200, Color.LightGray),
+                Font = new Font("Segoe UI", 14, FontStyle.Bold),
+                ForeColor = Color.Black,
+                Name = "dgvOverlayLabel"
+            };
+            dgvInstalledVersions.Controls.Add(overlay);
+            overlay.BringToFront();
+            dgvInstalledVersions.Enabled = false;
+
+            try
+            {
+                var appsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "apps.json");
+                List<AppInfo> apps = new List<AppInfo>();
+                if (File.Exists(appsPath))
+                {
+                    var json = File.ReadAllText(appsPath);
+                    apps = JsonConvert.DeserializeObject<List<AppInfo>>(json);
+                }
+
+                if (sshService == null)
+                {
+                    MessageBox.Show("No host selected.");
+                    return;
+                }
+
+                // Získání hostname a OS přes SSH
+                string vmName = await Task.Run(() => sshService.RunCommand("hostname"));
+                string vmOs = await Task.Run(() => sshService.RunCommand("ver"));
+                var selectedHost = listViewVmList.SelectedItems.Count > 0 ? (HostInfo)listViewVmList.SelectedItems[0].Tag : null;
+                string vmIp = selectedHost?.Host ?? string.Empty;
+                txtVmName.Text = vmName.Trim();
+                txtVmIp.Text = vmIp;
+                txtVmOs.Text = vmOs.Trim();
+
+                var installedAppVersions = new List<InstalledAppVersion>();
+                foreach (var app in apps)
+                {
+                    string version = "Not found";
+                    try
+                    {
+                        string output = await Task.Run(() => sshService.RunCommand($"winget list \"{app.WingetName}\""));
+                        if (!string.IsNullOrWhiteSpace(output))
+                        {
+                            var lines = output.Split('\n');
+                            int versionIndex = -1;
+                            foreach (var line in lines)
+                            {
+                                if (line.Trim().StartsWith("Name") && line.Contains("Version"))
+                                {
+                                    var headerParts = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                                    for (int i = 0; i < headerParts.Length; i++)
+                                    {
+                                        if (headerParts[i].Equals("Version", StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            versionIndex = i;
+                                            break;
+                                        }
+                                    }
+                                    break;
+                                }
+                            }
+                            foreach (var line in lines)
+                            {
+                                if (line.Contains(app.WingetName))
+                                {
+                                    var parts = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                                    if (versionIndex >= 0 && parts.Length > versionIndex)
+                                        version = parts[versionIndex];
+                                    else if (parts.Length > 0)
+                                        version = parts[^1];
+                                }
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        version = "Error";
+                    }
+                    installedAppVersions.Add(new InstalledAppVersion { DisplayName = app.DisplayName, Version = version });
+                }
+
+                // Uložení nových hodnot do repository včetně VM info
+                if (selectedHost != null)
+                {
+                    var info = new InstalledVersionsInfo
+                    {
+                        Host = selectedHost.Name,
+                        LastChecked = DateTime.Now,
+                        Apps = installedAppVersions,
+                        VmName = vmName.Trim(),
+                        VmIp = vmIp,
+                        VmOs = vmOs.Trim()
+                    };
+                    installedVersionsRepository.SaveForHost(info);
+                    ShowInstalledVersionsForHost(selectedHost.Name);
+                }
+            }
+            finally
+            {
+                // Odebrání overlaye a povolení DataGridView
+                var overlayToRemove = dgvInstalledVersions.Controls["dgvOverlayLabel"];
+                if (overlayToRemove != null)
+                    dgvInstalledVersions.Controls.Remove(overlayToRemove);
+                dgvInstalledVersions.Enabled = true;
+            }
+        }
+        
+    }
 }

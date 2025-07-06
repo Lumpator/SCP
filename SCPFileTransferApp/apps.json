@@ -1,0 +1,9 @@
+﻿[
+  { "DisplayName": "Git", "WingetName": "Git" },
+  { "DisplayName": "MaM 6", "WingetName": "Might and Magic 6 - The Mandate of Heaven" },
+  { "DisplayName": "The Sims", "WingetName": "The Sims Deluxe Edition" },
+  { "DisplayName": "Samepage", "WingetName": "Samepage" },
+  { "DisplayName": "Node.js", "WingetName": "Node.js" },
+  { "DisplayName": "Prdel", "WingetName": "Prdel" }
+]
+

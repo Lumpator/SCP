@@ -14,6 +14,7 @@ namespace SCPFileTransferApp.Models
         public required Button BtnSelectRemoteDirectory { get; set; }
         public required Button BtnSelectLocalFile { get; set; }
         public required Button BtnTransferFile { get; set; }
-        public required ComboBox ComboBoxHosts { get; set; }
+        
+        public required ListView HostsListView { get; set; }
         }
     }

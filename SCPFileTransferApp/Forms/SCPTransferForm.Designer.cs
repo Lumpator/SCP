@@ -29,206 +29,168 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SCPTransferForm));
-            btnSelectLocalFile = new System.Windows.Forms.Button();
-            txtLocalFilePath = new System.Windows.Forms.TextBox();
-            btnSelectRemoteDirectory = new System.Windows.Forms.Button();
-            treeViewRemoteDirectories = new System.Windows.Forms.TreeView();
-            btnTransferFile = new System.Windows.Forms.Button();
-            txtRemoteDirectoryPath = new System.Windows.Forms.TextBox();
-            progressBar = new System.Windows.Forms.ProgressBar();
-            lblFileSize = new System.Windows.Forms.Label();
-            comboBoxMode = new System.Windows.Forms.ComboBox();
-            comboBoxHosts = new System.Windows.Forms.ComboBox();
-            lblTransferMode = new System.Windows.Forms.Label();
-            lblSelectHost = new System.Windows.Forms.Label();
-            pictureBoxPingStatus = new System.Windows.Forms.PictureBox();
+            listViewVmList = new System.Windows.Forms.ListView();
+            Vms = new System.Windows.Forms.ColumnHeader();
+            lblListOfVms = new System.Windows.Forms.Label();
+            lblVmDetails = new System.Windows.Forms.Label();
+            label9 = new System.Windows.Forms.Label();
             pictureBoxSSHStatus = new System.Windows.Forms.PictureBox();
+            pictureBoxPingStatus = new System.Windows.Forms.PictureBox();
             lblPingStatus = new System.Windows.Forms.Label();
+            lblTransferMode = new System.Windows.Forms.Label();
             lblSSHStatus = new System.Windows.Forms.Label();
+            comboBoxMode = new System.Windows.Forms.ComboBox();
             btnSshConsole = new System.Windows.Forms.Button();
+            txtRemoteDirectoryPath = new System.Windows.Forms.TextBox();
+            comboBoxPipelines = new System.Windows.Forms.ComboBox();
+            btnSelectRemoteDirectory = new System.Windows.Forms.Button();
+            txtVmName = new System.Windows.Forms.TextBox();
+            label1 = new System.Windows.Forms.Label();
+            treeViewRemoteDirectories = new System.Windows.Forms.TreeView();
+            txtVmType = new System.Windows.Forms.TextBox();
+            label2 = new System.Windows.Forms.Label();
+            txtVmIp = new System.Windows.Forms.TextBox();
+            txtLocalFilePath = new System.Windows.Forms.TextBox();
+            label3 = new System.Windows.Forms.Label();
+            btnTransferFile = new System.Windows.Forms.Button();
+            txtVmOs = new System.Windows.Forms.TextBox();
+            progressBar = new System.Windows.Forms.ProgressBar();
+            label4 = new System.Windows.Forms.Label();
             panelDragDrop = new System.Windows.Forms.Panel();
             lblDragDrop = new System.Windows.Forms.Label();
-            listView1 = new System.Windows.Forms.ListView();
-            lblListOfVms = new System.Windows.Forms.Label();
-            comboBoxPipelines = new System.Windows.Forms.ComboBox();
-            textBox1 = new System.Windows.Forms.TextBox();
-            label1 = new System.Windows.Forms.Label();
-            lblVmDetails = new System.Windows.Forms.Label();
-            groupBox1 = new System.Windows.Forms.GroupBox();
+            dgvInstalledVersions = new System.Windows.Forms.DataGridView();
+            lblFileSize = new System.Windows.Forms.Label();
+            label5 = new System.Windows.Forms.Label();
+            btnSelectLocalFile = new System.Windows.Forms.Button();
+            label6 = new System.Windows.Forms.Label();
+            label7 = new System.Windows.Forms.Label();
+            txtLastVmInstalledVersionReload = new System.Windows.Forms.TextBox();
+            btnReloadVmInformation = new System.Windows.Forms.Button();
+            label8 = new System.Windows.Forms.Label();
+            btnJenkinsDownload = new System.Windows.Forms.Button();
             listViewStatus = new System.Windows.Forms.ListView();
             Status = new System.Windows.Forms.ColumnHeader();
-            btnJenkinsDownload = new System.Windows.Forms.Button();
-            label8 = new System.Windows.Forms.Label();
-            button1 = new System.Windows.Forms.Button();
-            textBox5 = new System.Windows.Forms.TextBox();
-            label7 = new System.Windows.Forms.Label();
-            label6 = new System.Windows.Forms.Label();
-            label5 = new System.Windows.Forms.Label();
-            dataGridView1 = new System.Windows.Forms.DataGridView();
-            label4 = new System.Windows.Forms.Label();
-            textBox4 = new System.Windows.Forms.TextBox();
-            label3 = new System.Windows.Forms.Label();
-            textBox3 = new System.Windows.Forms.TextBox();
-            label2 = new System.Windows.Forms.Label();
-            textBox2 = new System.Windows.Forms.TextBox();
-            ((System.ComponentModel.ISupportInitialize)pictureBoxPingStatus).BeginInit();
+            groupBox1 = new System.Windows.Forms.GroupBox();
+            groupBox2 = new System.Windows.Forms.GroupBox();
             ((System.ComponentModel.ISupportInitialize)pictureBoxSSHStatus).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxPingStatus).BeginInit();
             panelDragDrop.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvInstalledVersions).BeginInit();
             groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            groupBox2.SuspendLayout();
             SuspendLayout();
             // 
-            // btnSelectLocalFile
+            // listViewVmList
             // 
-            btnSelectLocalFile.Location = new System.Drawing.Point(332, 388);
-            btnSelectLocalFile.Name = "btnSelectLocalFile";
-            btnSelectLocalFile.Size = new System.Drawing.Size(159, 23);
-            btnSelectLocalFile.TabIndex = 0;
-            btnSelectLocalFile.Text = "Browse Local Files";
-            btnSelectLocalFile.UseVisualStyleBackColor = true;
-            btnSelectLocalFile.Click += btnSelectLocalFile_Click;
+            listViewVmList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { Vms });
+            listViewVmList.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)0));
+            listViewVmList.FullRowSelect = true;
+            listViewVmList.GridLines = true;
+            listViewVmList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
+            listViewVmList.Location = new System.Drawing.Point(35, 70);
+            listViewVmList.MultiSelect = false;
+            listViewVmList.Name = "listViewVmList";
+            listViewVmList.Size = new System.Drawing.Size(310, 600);
+            listViewVmList.TabIndex = 100;
+            listViewVmList.UseCompatibleStateImageBehavior = false;
+            listViewVmList.View = System.Windows.Forms.View.Details;
+            listViewVmList.SelectedIndexChanged += listViewVmList_SelectedIndexChanged;
             // 
-            // txtLocalFilePath
+            // Vms
             // 
-            txtLocalFilePath.Location = new System.Drawing.Point(332, 417);
-            txtLocalFilePath.Name = "txtLocalFilePath";
-            txtLocalFilePath.Size = new System.Drawing.Size(407, 23);
-            txtLocalFilePath.TabIndex = 1;
+            Vms.Name = "Vms";
+            Vms.Text = "";
+            Vms.Width = 300;
             // 
-            // btnSelectRemoteDirectory
+            // lblListOfVms
             // 
-            btnSelectRemoteDirectory.Location = new System.Drawing.Point(332, 64);
-            btnSelectRemoteDirectory.Name = "btnSelectRemoteDirectory";
-            btnSelectRemoteDirectory.Size = new System.Drawing.Size(159, 23);
-            btnSelectRemoteDirectory.TabIndex = 2;
-            btnSelectRemoteDirectory.Text = "Browse Remote Directories";
-            btnSelectRemoteDirectory.UseVisualStyleBackColor = true;
-            btnSelectRemoteDirectory.Click += btnSelectRemoteDirectory_Click;
+            lblListOfVms.AutoSize = true;
+            lblListOfVms.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)0));
+            lblListOfVms.Location = new System.Drawing.Point(35, 25);
+            lblListOfVms.Name = "lblListOfVms";
+            lblListOfVms.Size = new System.Drawing.Size(132, 32);
+            lblListOfVms.TabIndex = 19;
+            lblListOfVms.Text = "List of VMs";
             // 
-            // treeViewRemoteDirectories
+            // lblVmDetails
             // 
-            treeViewRemoteDirectories.Location = new System.Drawing.Point(332, 123);
-            treeViewRemoteDirectories.Name = "treeViewRemoteDirectories";
-            treeViewRemoteDirectories.Size = new System.Drawing.Size(407, 259);
-            treeViewRemoteDirectories.TabIndex = 3;
-            treeViewRemoteDirectories.BeforeExpand += treeViewRemoteDirectories_BeforeExpand;
-            treeViewRemoteDirectories.AfterSelect += treeViewRemoteDirectories_AfterSelect;
+            lblVmDetails.AutoSize = true;
+            lblVmDetails.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)0));
+            lblVmDetails.Location = new System.Drawing.Point(375, 25);
+            lblVmDetails.Name = "lblVmDetails";
+            lblVmDetails.Size = new System.Drawing.Size(130, 32);
+            lblVmDetails.TabIndex = 23;
+            lblVmDetails.Text = "VM Details";
             // 
-            // btnTransferFile
+            // label9
             // 
-            btnTransferFile.BackColor = System.Drawing.Color.LightGreen;
-            btnTransferFile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            btnTransferFile.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)0));
-            btnTransferFile.Location = new System.Drawing.Point(334, 560);
-            btnTransferFile.Name = "btnTransferFile";
-            btnTransferFile.Size = new System.Drawing.Size(159, 23);
-            btnTransferFile.TabIndex = 4;
-            btnTransferFile.Text = "Start File Transfer ->";
-            btnTransferFile.UseVisualStyleBackColor = false;
-            btnTransferFile.Click += btnTransferFile_Click;
-            // 
-            // txtRemoteDirectoryPath
-            // 
-            txtRemoteDirectoryPath.Location = new System.Drawing.Point(332, 94);
-            txtRemoteDirectoryPath.Name = "txtRemoteDirectoryPath";
-            txtRemoteDirectoryPath.Size = new System.Drawing.Size(407, 23);
-            txtRemoteDirectoryPath.TabIndex = 5;
-            // 
-            // progressBar
-            // 
-            progressBar.Location = new System.Drawing.Point(498, 560);
-            progressBar.Name = "progressBar";
-            progressBar.Size = new System.Drawing.Size(156, 22);
-            progressBar.TabIndex = 6;
-            // 
-            // lblFileSize
-            // 
-            lblFileSize.AutoSize = true;
-            lblFileSize.Location = new System.Drawing.Point(336, 586);
-            lblFileSize.Name = "lblFileSize";
-            lblFileSize.Size = new System.Drawing.Size(48, 15);
-            lblFileSize.TabIndex = 7;
-            lblFileSize.Text = "File Size";
-            // 
-            // comboBoxMode
-            // 
-            comboBoxMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            comboBoxMode.FormattingEnabled = true;
-            comboBoxMode.Items.AddRange(new object[] { "Transfer to", "Transfer from" });
-            comboBoxMode.Location = new System.Drawing.Point(332, 35);
-            comboBoxMode.Name = "comboBoxMode";
-            comboBoxMode.Size = new System.Drawing.Size(159, 23);
-            comboBoxMode.TabIndex = 8;
-            comboBoxMode.SelectedIndexChanged += comboBoxMode_SelectedIndexChanged;
-            // 
-            // comboBoxHosts
-            // 
-            comboBoxHosts.FormattingEnabled = true;
-            comboBoxHosts.Location = new System.Drawing.Point(721, 29);
-            comboBoxHosts.Name = "comboBoxHosts";
-            comboBoxHosts.Size = new System.Drawing.Size(156, 23);
-            comboBoxHosts.TabIndex = 9;
-            comboBoxHosts.SelectedIndexChanged += comboBoxHosts_SelectedIndexChanged;
-            // 
-            // lblTransferMode
-            // 
-            lblTransferMode.AutoSize = true;
-            lblTransferMode.Location = new System.Drawing.Point(334, 17);
-            lblTransferMode.Name = "lblTransferMode";
-            lblTransferMode.Size = new System.Drawing.Size(83, 15);
-            lblTransferMode.TabIndex = 10;
-            lblTransferMode.Text = "Transfer Mode";
-            // 
-            // lblSelectHost
-            // 
-            lblSelectHost.AutoSize = true;
-            lblSelectHost.Location = new System.Drawing.Point(721, 9);
-            lblSelectHost.Name = "lblSelectHost";
-            lblSelectHost.Size = new System.Drawing.Size(110, 15);
-            lblSelectHost.TabIndex = 11;
-            lblSelectHost.Text = "Select Remote Host";
-            // 
-            // pictureBoxPingStatus
-            // 
-            pictureBoxPingStatus.Image = global::SCPFileTransferApp.Properties.Resources.RedCircle;
-            pictureBoxPingStatus.Location = new System.Drawing.Point(516, 35);
-            pictureBoxPingStatus.Name = "pictureBoxPingStatus";
-            pictureBoxPingStatus.Size = new System.Drawing.Size(25, 25);
-            pictureBoxPingStatus.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            pictureBoxPingStatus.TabIndex = 12;
-            pictureBoxPingStatus.TabStop = false;
+            label9.AutoSize = true;
+            label9.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)0));
+            label9.Location = new System.Drawing.Point(897, 25);
+            label9.Name = "label9";
+            label9.Size = new System.Drawing.Size(142, 32);
+            label9.TabIndex = 101;
+            label9.Text = "File Transfer";
             // 
             // pictureBoxSSHStatus
             // 
-            pictureBoxSSHStatus.Image = global::SCPFileTransferApp.Properties.Resources.RedCircle;
-            pictureBoxSSHStatus.Location = new System.Drawing.Point(578, 35);
+            pictureBoxSSHStatus.Location = new System.Drawing.Point(252, 34);
             pictureBoxSSHStatus.Name = "pictureBoxSSHStatus";
             pictureBoxSSHStatus.Size = new System.Drawing.Size(25, 25);
             pictureBoxSSHStatus.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             pictureBoxSSHStatus.TabIndex = 13;
             pictureBoxSSHStatus.TabStop = false;
             // 
+            // pictureBoxPingStatus
+            // 
+            pictureBoxPingStatus.Location = new System.Drawing.Point(190, 34);
+            pictureBoxPingStatus.Name = "pictureBoxPingStatus";
+            pictureBoxPingStatus.Size = new System.Drawing.Size(25, 25);
+            pictureBoxPingStatus.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            pictureBoxPingStatus.TabIndex = 12;
+            pictureBoxPingStatus.TabStop = false;
+            // 
             // lblPingStatus
             // 
             lblPingStatus.AutoSize = true;
-            lblPingStatus.Location = new System.Drawing.Point(516, 17);
+            lblPingStatus.Location = new System.Drawing.Point(190, 16);
             lblPingStatus.Name = "lblPingStatus";
             lblPingStatus.Size = new System.Drawing.Size(31, 15);
             lblPingStatus.TabIndex = 14;
             lblPingStatus.Text = "Ping";
             // 
+            // lblTransferMode
+            // 
+            lblTransferMode.AutoSize = true;
+            lblTransferMode.Location = new System.Drawing.Point(6, 16);
+            lblTransferMode.Name = "lblTransferMode";
+            lblTransferMode.Size = new System.Drawing.Size(83, 15);
+            lblTransferMode.TabIndex = 10;
+            lblTransferMode.Text = "Transfer Mode";
+            // 
             // lblSSHStatus
             // 
             lblSSHStatus.AutoSize = true;
-            lblSSHStatus.Location = new System.Drawing.Point(578, 17);
+            lblSSHStatus.Location = new System.Drawing.Point(252, 16);
             lblSSHStatus.Name = "lblSSHStatus";
             lblSSHStatus.Size = new System.Drawing.Size(28, 15);
             lblSSHStatus.TabIndex = 15;
             lblSSHStatus.Text = "SSH";
             // 
+            // comboBoxMode
+            // 
+            comboBoxMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            comboBoxMode.FormattingEnabled = true;
+            comboBoxMode.Items.AddRange(new object[] { "Transfer to", "Transfer from" });
+            comboBoxMode.Location = new System.Drawing.Point(6, 34);
+            comboBoxMode.Name = "comboBoxMode";
+            comboBoxMode.Size = new System.Drawing.Size(159, 23);
+            comboBoxMode.TabIndex = 8;
+            comboBoxMode.SelectedIndexChanged += comboBoxMode_SelectedIndexChanged;
+            // 
             // btnSshConsole
             // 
-            btnSshConsole.Location = new System.Drawing.Point(638, 35);
+            btnSshConsole.Location = new System.Drawing.Point(312, 34);
             btnSshConsole.Name = "btnSshConsole";
             btnSshConsole.Size = new System.Drawing.Size(101, 23);
             btnSshConsole.TabIndex = 16;
@@ -236,13 +198,143 @@
             btnSshConsole.UseVisualStyleBackColor = true;
             btnSshConsole.Click += btnSshConsole_Click;
             // 
+            // txtRemoteDirectoryPath
+            // 
+            txtRemoteDirectoryPath.Location = new System.Drawing.Point(6, 92);
+            txtRemoteDirectoryPath.Name = "txtRemoteDirectoryPath";
+            txtRemoteDirectoryPath.Size = new System.Drawing.Size(407, 23);
+            txtRemoteDirectoryPath.TabIndex = 5;
+            // 
+            // comboBoxPipelines
+            // 
+            comboBoxPipelines.FormattingEnabled = true;
+            comboBoxPipelines.Location = new System.Drawing.Point(9, 406);
+            comboBoxPipelines.Name = "comboBoxPipelines";
+            comboBoxPipelines.Size = new System.Drawing.Size(282, 23);
+            comboBoxPipelines.TabIndex = 20;
+            // 
+            // btnSelectRemoteDirectory
+            // 
+            btnSelectRemoteDirectory.Location = new System.Drawing.Point(6, 63);
+            btnSelectRemoteDirectory.Name = "btnSelectRemoteDirectory";
+            btnSelectRemoteDirectory.Size = new System.Drawing.Size(159, 23);
+            btnSelectRemoteDirectory.TabIndex = 2;
+            btnSelectRemoteDirectory.Text = "Browse Remote Directories";
+            btnSelectRemoteDirectory.UseVisualStyleBackColor = true;
+            btnSelectRemoteDirectory.Click += btnSelectRemoteDirectory_Click;
+            // 
+            // txtVmName
+            // 
+            txtVmName.Location = new System.Drawing.Point(6, 35);
+            txtVmName.Name = "txtVmName";
+            txtVmName.ReadOnly = true;
+            txtVmName.Size = new System.Drawing.Size(120, 23);
+            txtVmName.TabIndex = 21;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(6, 17);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(39, 15);
+            label1.TabIndex = 22;
+            label1.Text = "Name";
+            // 
+            // treeViewRemoteDirectories
+            // 
+            treeViewRemoteDirectories.Location = new System.Drawing.Point(6, 129);
+            treeViewRemoteDirectories.Name = "treeViewRemoteDirectories";
+            treeViewRemoteDirectories.Size = new System.Drawing.Size(407, 259);
+            treeViewRemoteDirectories.TabIndex = 3;
+            treeViewRemoteDirectories.BeforeExpand += treeViewRemoteDirectories_BeforeExpand;
+            treeViewRemoteDirectories.AfterSelect += treeViewRemoteDirectories_AfterSelect;
+            // 
+            // txtVmType
+            // 
+            txtVmType.Location = new System.Drawing.Point(132, 35);
+            txtVmType.Name = "txtVmType";
+            txtVmType.ReadOnly = true;
+            txtVmType.Size = new System.Drawing.Size(120, 23);
+            txtVmType.TabIndex = 23;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new System.Drawing.Point(132, 17);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(32, 15);
+            label2.TabIndex = 24;
+            label2.Text = "Type";
+            // 
+            // txtVmIp
+            // 
+            txtVmIp.Location = new System.Drawing.Point(259, 35);
+            txtVmIp.Name = "txtVmIp";
+            txtVmIp.ReadOnly = true;
+            txtVmIp.Size = new System.Drawing.Size(120, 23);
+            txtVmIp.TabIndex = 25;
+            // 
+            // txtLocalFilePath
+            // 
+            txtLocalFilePath.Location = new System.Drawing.Point(6, 423);
+            txtLocalFilePath.Name = "txtLocalFilePath";
+            txtLocalFilePath.Size = new System.Drawing.Size(407, 23);
+            txtLocalFilePath.TabIndex = 1;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new System.Drawing.Point(259, 17);
+            label3.Name = "label3";
+            label3.Size = new System.Drawing.Size(62, 15);
+            label3.TabIndex = 26;
+            label3.Text = "IP Address";
+            // 
+            // btnTransferFile
+            // 
+            btnTransferFile.BackColor = System.Drawing.Color.LightGreen;
+            btnTransferFile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            btnTransferFile.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)0));
+            btnTransferFile.Location = new System.Drawing.Point(8, 566);
+            btnTransferFile.Name = "btnTransferFile";
+            btnTransferFile.Size = new System.Drawing.Size(159, 23);
+            btnTransferFile.TabIndex = 4;
+            btnTransferFile.Text = "Start File Transfer ->";
+            btnTransferFile.UseVisualStyleBackColor = false;
+            btnTransferFile.Click += btnTransferFile_Click;
+            // 
+            // txtVmOs
+            // 
+            txtVmOs.Location = new System.Drawing.Point(392, 35);
+            txtVmOs.Multiline = true;
+            txtVmOs.Name = "txtVmOs";
+            txtVmOs.ReadOnly = true;
+            txtVmOs.Size = new System.Drawing.Size(120, 82);
+            txtVmOs.TabIndex = 27;
+            // 
+            // progressBar
+            // 
+            progressBar.Location = new System.Drawing.Point(172, 566);
+            progressBar.Name = "progressBar";
+            progressBar.Size = new System.Drawing.Size(156, 22);
+            progressBar.TabIndex = 6;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new System.Drawing.Point(392, 17);
+            label4.Name = "label4";
+            label4.Size = new System.Drawing.Size(21, 15);
+            label4.TabIndex = 28;
+            label4.Text = "Os";
+            // 
             // panelDragDrop
             // 
             panelDragDrop.AllowDrop = true;
             panelDragDrop.BackColor = System.Drawing.SystemColors.ControlLight;
             panelDragDrop.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             panelDragDrop.Controls.Add(lblDragDrop);
-            panelDragDrop.Location = new System.Drawing.Point(332, 446);
+            panelDragDrop.Location = new System.Drawing.Point(6, 452);
             panelDragDrop.Name = "panelDragDrop";
             panelDragDrop.Size = new System.Drawing.Size(407, 108);
             panelDragDrop.TabIndex = 17;
@@ -258,150 +350,51 @@
             lblDragDrop.TabIndex = 0;
             lblDragDrop.Text = "Drag and Drop file here\r\n";
             // 
-            // listView1
+            // dgvInstalledVersions
             // 
-            listView1.Location = new System.Drawing.Point(35, 70);
-            listView1.Name = "listView1";
-            listView1.Size = new System.Drawing.Size(311, 600);
-            listView1.TabIndex = 18;
-            listView1.UseCompatibleStateImageBehavior = false;
+            dgvInstalledVersions.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvInstalledVersions.Location = new System.Drawing.Point(6, 86);
+            dgvInstalledVersions.Name = "dgvInstalledVersions";
+            dgvInstalledVersions.Size = new System.Drawing.Size(373, 196);
+            dgvInstalledVersions.TabIndex = 29;
             // 
-            // lblListOfVms
+            // lblFileSize
             // 
-            lblListOfVms.AutoSize = true;
-            lblListOfVms.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)0));
-            lblListOfVms.Location = new System.Drawing.Point(35, 25);
-            lblListOfVms.Name = "lblListOfVms";
-            lblListOfVms.Size = new System.Drawing.Size(132, 32);
-            lblListOfVms.TabIndex = 19;
-            lblListOfVms.Text = "List of VMs";
+            lblFileSize.AutoSize = true;
+            lblFileSize.Location = new System.Drawing.Point(8, 592);
+            lblFileSize.Name = "lblFileSize";
+            lblFileSize.Size = new System.Drawing.Size(48, 15);
+            lblFileSize.TabIndex = 7;
+            lblFileSize.Text = "File Size";
             // 
-            // comboBoxPipelines
+            // label5
             // 
-            comboBoxPipelines.FormattingEnabled = true;
-            comboBoxPipelines.Location = new System.Drawing.Point(6, 435);
-            comboBoxPipelines.Name = "comboBoxPipelines";
-            comboBoxPipelines.Size = new System.Drawing.Size(285, 23);
-            comboBoxPipelines.TabIndex = 20;
+            label5.AutoSize = true;
+            label5.Location = new System.Drawing.Point(6, 68);
+            label5.Name = "label5";
+            label5.Size = new System.Drawing.Size(97, 15);
+            label5.TabIndex = 30;
+            label5.Text = "Installed versions";
             // 
-            // textBox1
+            // btnSelectLocalFile
             // 
-            textBox1.Location = new System.Drawing.Point(6, 35);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new System.Drawing.Size(120, 23);
-            textBox1.TabIndex = 21;
+            btnSelectLocalFile.Location = new System.Drawing.Point(6, 394);
+            btnSelectLocalFile.Name = "btnSelectLocalFile";
+            btnSelectLocalFile.Size = new System.Drawing.Size(159, 23);
+            btnSelectLocalFile.TabIndex = 0;
+            btnSelectLocalFile.Text = "Browse Local Files";
+            btnSelectLocalFile.UseVisualStyleBackColor = true;
+            btnSelectLocalFile.Click += btnSelectLocalFile_Click;
             // 
-            // label1
+            // label6
             // 
-            label1.AutoSize = true;
-            label1.Location = new System.Drawing.Point(6, 17);
-            label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(39, 15);
-            label1.TabIndex = 22;
-            label1.Text = "Name";
-            // 
-            // lblVmDetails
-            // 
-            lblVmDetails.AutoSize = true;
-            lblVmDetails.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)0));
-            lblVmDetails.Location = new System.Drawing.Point(375, 25);
-            lblVmDetails.Name = "lblVmDetails";
-            lblVmDetails.Size = new System.Drawing.Size(130, 32);
-            lblVmDetails.TabIndex = 23;
-            lblVmDetails.Text = "VM Details";
-            // 
-            // groupBox1
-            // 
-            groupBox1.Controls.Add(listViewStatus);
-            groupBox1.Controls.Add(btnJenkinsDownload);
-            groupBox1.Controls.Add(label8);
-            groupBox1.Controls.Add(button1);
-            groupBox1.Controls.Add(textBox5);
-            groupBox1.Controls.Add(label7);
-            groupBox1.Controls.Add(label6);
-            groupBox1.Controls.Add(label5);
-            groupBox1.Controls.Add(dataGridView1);
-            groupBox1.Controls.Add(label4);
-            groupBox1.Controls.Add(textBox4);
-            groupBox1.Controls.Add(label3);
-            groupBox1.Controls.Add(textBox3);
-            groupBox1.Controls.Add(label2);
-            groupBox1.Controls.Add(textBox2);
-            groupBox1.Controls.Add(treeViewRemoteDirectories);
-            groupBox1.Controls.Add(btnSelectLocalFile);
-            groupBox1.Controls.Add(label1);
-            groupBox1.Controls.Add(txtLocalFilePath);
-            groupBox1.Controls.Add(textBox1);
-            groupBox1.Controls.Add(btnSelectRemoteDirectory);
-            groupBox1.Controls.Add(comboBoxPipelines);
-            groupBox1.Controls.Add(btnTransferFile);
-            groupBox1.Controls.Add(txtRemoteDirectoryPath);
-            groupBox1.Controls.Add(progressBar);
-            groupBox1.Controls.Add(panelDragDrop);
-            groupBox1.Controls.Add(lblFileSize);
-            groupBox1.Controls.Add(btnSshConsole);
-            groupBox1.Controls.Add(comboBoxMode);
-            groupBox1.Controls.Add(lblSSHStatus);
-            groupBox1.Controls.Add(lblTransferMode);
-            groupBox1.Controls.Add(lblPingStatus);
-            groupBox1.Controls.Add(pictureBoxPingStatus);
-            groupBox1.Controls.Add(pictureBoxSSHStatus);
-            groupBox1.Location = new System.Drawing.Point(375, 60);
-            groupBox1.Name = "groupBox1";
-            groupBox1.Size = new System.Drawing.Size(756, 610);
-            groupBox1.TabIndex = 24;
-            groupBox1.TabStop = false;
-            // 
-            // listViewStatus
-            // 
-            listViewStatus.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { Status });
-            listViewStatus.Location = new System.Drawing.Point(6, 493);
-            listViewStatus.Name = "listViewStatus";
-            listViewStatus.Size = new System.Drawing.Size(285, 108);
-            listViewStatus.TabIndex = 37;
-            listViewStatus.UseCompatibleStateImageBehavior = false;
-            listViewStatus.View = System.Windows.Forms.View.List;
-            // 
-            // Status
-            // 
-            Status.Name = "Status";
-            Status.Text = "";
-            Status.Width = 285;
-            // 
-            // btnJenkinsDownload
-            // 
-            btnJenkinsDownload.Location = new System.Drawing.Point(6, 464);
-            btnJenkinsDownload.Name = "btnJenkinsDownload";
-            btnJenkinsDownload.Size = new System.Drawing.Size(75, 23);
-            btnJenkinsDownload.TabIndex = 36;
-            btnJenkinsDownload.Text = "Download";
-            btnJenkinsDownload.UseVisualStyleBackColor = true;
-            btnJenkinsDownload.Click += btnJenkinsDownload_Click;
-            // 
-            // label8
-            // 
-            label8.AutoSize = true;
-            label8.Location = new System.Drawing.Point(9, 417);
-            label8.Name = "label8";
-            label8.Size = new System.Drawing.Size(90, 15);
-            label8.TabIndex = 35;
-            label8.Text = "Jenkins pipeline";
-            // 
-            // button1
-            // 
-            button1.Location = new System.Drawing.Point(9, 332);
-            button1.Name = "button1";
-            button1.Size = new System.Drawing.Size(282, 23);
-            button1.TabIndex = 34;
-            button1.Text = "Reload information";
-            button1.UseVisualStyleBackColor = true;
-            // 
-            // textBox5
-            // 
-            textBox5.Location = new System.Drawing.Point(9, 303);
-            textBox5.Name = "textBox5";
-            textBox5.Size = new System.Drawing.Size(282, 23);
-            textBox5.TabIndex = 33;
+            label6.AutoSize = true;
+            label6.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)0));
+            label6.Location = new System.Drawing.Point(9, 350);
+            label6.Name = "label6";
+            label6.Size = new System.Drawing.Size(212, 32);
+            label6.TabIndex = 31;
+            label6.Text = "Download artifacts";
             // 
             // label7
             // 
@@ -412,105 +405,141 @@
             label7.TabIndex = 32;
             label7.Text = "Last reload";
             // 
-            // label6
+            // txtLastVmInstalledVersionReload
             // 
-            label6.AutoSize = true;
-            label6.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)0));
-            label6.Location = new System.Drawing.Point(6, 378);
-            label6.Name = "label6";
-            label6.Size = new System.Drawing.Size(212, 32);
-            label6.TabIndex = 31;
-            label6.Text = "Download artifacts";
+            txtLastVmInstalledVersionReload.Location = new System.Drawing.Point(9, 303);
+            txtLastVmInstalledVersionReload.Name = "txtLastVmInstalledVersionReload";
+            txtLastVmInstalledVersionReload.ReadOnly = true;
+            txtLastVmInstalledVersionReload.Size = new System.Drawing.Size(282, 23);
+            txtLastVmInstalledVersionReload.TabIndex = 33;
             // 
-            // label5
+            // btnReloadVmInformation
             // 
-            label5.AutoSize = true;
-            label5.Location = new System.Drawing.Point(6, 123);
-            label5.Name = "label5";
-            label5.Size = new System.Drawing.Size(97, 15);
-            label5.TabIndex = 30;
-            label5.Text = "Installed versions";
+            btnReloadVmInformation.Location = new System.Drawing.Point(304, 303);
+            btnReloadVmInformation.Name = "btnReloadVmInformation";
+            btnReloadVmInformation.Size = new System.Drawing.Size(75, 23);
+            btnReloadVmInformation.TabIndex = 34;
+            btnReloadVmInformation.Text = "Reload information";
+            btnReloadVmInformation.UseVisualStyleBackColor = true;
+            btnReloadVmInformation.Click += btnReloadVmInformation_Click;
             // 
-            // dataGridView1
+            // label8
             // 
-            dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Location = new System.Drawing.Point(6, 141);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.Size = new System.Drawing.Size(285, 141);
-            dataGridView1.TabIndex = 29;
+            label8.AutoSize = true;
+            label8.Location = new System.Drawing.Point(13, 388);
+            label8.Name = "label8";
+            label8.Size = new System.Drawing.Size(90, 15);
+            label8.TabIndex = 35;
+            label8.Text = "Jenkins pipeline";
             // 
-            // label4
+            // btnJenkinsDownload
             // 
-            label4.AutoSize = true;
-            label4.Location = new System.Drawing.Point(171, 68);
-            label4.Name = "label4";
-            label4.Size = new System.Drawing.Size(21, 15);
-            label4.TabIndex = 28;
-            label4.Text = "Os";
+            btnJenkinsDownload.Location = new System.Drawing.Point(304, 405);
+            btnJenkinsDownload.Name = "btnJenkinsDownload";
+            btnJenkinsDownload.Size = new System.Drawing.Size(75, 23);
+            btnJenkinsDownload.TabIndex = 36;
+            btnJenkinsDownload.Text = "Download";
+            btnJenkinsDownload.UseVisualStyleBackColor = true;
+            btnJenkinsDownload.Click += btnJenkinsDownload_Click;
             // 
-            // textBox4
+            // listViewStatus
             // 
-            textBox4.Location = new System.Drawing.Point(171, 86);
-            textBox4.Name = "textBox4";
-            textBox4.Size = new System.Drawing.Size(120, 23);
-            textBox4.TabIndex = 27;
+            listViewStatus.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { Status });
+            listViewStatus.Location = new System.Drawing.Point(6, 435);
+            listViewStatus.Name = "listViewStatus";
+            listViewStatus.Size = new System.Drawing.Size(373, 169);
+            listViewStatus.TabIndex = 37;
+            listViewStatus.UseCompatibleStateImageBehavior = false;
+            listViewStatus.View = System.Windows.Forms.View.List;
             // 
-            // label3
+            // Status
             // 
-            label3.AutoSize = true;
-            label3.Location = new System.Drawing.Point(6, 68);
-            label3.Name = "label3";
-            label3.Size = new System.Drawing.Size(62, 15);
-            label3.TabIndex = 26;
-            label3.Text = "IP Address";
+            Status.Name = "Status";
+            Status.Text = "";
+            Status.Width = 285;
             // 
-            // textBox3
+            // groupBox1
             // 
-            textBox3.Location = new System.Drawing.Point(6, 86);
-            textBox3.Name = "textBox3";
-            textBox3.Size = new System.Drawing.Size(120, 23);
-            textBox3.TabIndex = 25;
+            groupBox1.Controls.Add(listViewStatus);
+            groupBox1.Controls.Add(btnJenkinsDownload);
+            groupBox1.Controls.Add(label8);
+            groupBox1.Controls.Add(btnReloadVmInformation);
+            groupBox1.Controls.Add(txtLastVmInstalledVersionReload);
+            groupBox1.Controls.Add(label7);
+            groupBox1.Controls.Add(label6);
+            groupBox1.Controls.Add(label5);
+            groupBox1.Controls.Add(dgvInstalledVersions);
+            groupBox1.Controls.Add(label4);
+            groupBox1.Controls.Add(txtVmOs);
+            groupBox1.Controls.Add(label3);
+            groupBox1.Controls.Add(txtVmIp);
+            groupBox1.Controls.Add(label2);
+            groupBox1.Controls.Add(txtVmType);
+            groupBox1.Controls.Add(label1);
+            groupBox1.Controls.Add(txtVmName);
+            groupBox1.Controls.Add(comboBoxPipelines);
+            groupBox1.Location = new System.Drawing.Point(375, 60);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new System.Drawing.Size(521, 616);
+            groupBox1.TabIndex = 24;
+            groupBox1.TabStop = false;
             // 
-            // label2
+            // groupBox2
             // 
-            label2.AutoSize = true;
-            label2.Location = new System.Drawing.Point(171, 17);
-            label2.Name = "label2";
-            label2.Size = new System.Drawing.Size(32, 15);
-            label2.TabIndex = 24;
-            label2.Text = "Type";
-            // 
-            // textBox2
-            // 
-            textBox2.Location = new System.Drawing.Point(171, 35);
-            textBox2.Name = "textBox2";
-            textBox2.Size = new System.Drawing.Size(120, 23);
-            textBox2.TabIndex = 23;
+            groupBox2.Controls.Add(treeViewRemoteDirectories);
+            groupBox2.Controls.Add(txtLocalFilePath);
+            groupBox2.Controls.Add(btnSelectRemoteDirectory);
+            groupBox2.Controls.Add(btnTransferFile);
+            groupBox2.Controls.Add(btnSshConsole);
+            groupBox2.Controls.Add(progressBar);
+            groupBox2.Controls.Add(txtRemoteDirectoryPath);
+            groupBox2.Controls.Add(lblSSHStatus);
+            groupBox2.Controls.Add(lblTransferMode);
+            groupBox2.Controls.Add(lblFileSize);
+            groupBox2.Controls.Add(btnSelectLocalFile);
+            groupBox2.Controls.Add(panelDragDrop);
+            groupBox2.Controls.Add(comboBoxMode);
+            groupBox2.Controls.Add(lblPingStatus);
+            groupBox2.Controls.Add(pictureBoxSSHStatus);
+            groupBox2.Controls.Add(pictureBoxPingStatus);
+            groupBox2.Location = new System.Drawing.Point(902, 60);
+            groupBox2.Name = "groupBox2";
+            groupBox2.Size = new System.Drawing.Size(431, 616);
+            groupBox2.TabIndex = 102;
+            groupBox2.TabStop = false;
             // 
             // SCPTransferForm
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(1147, 682);
+            ClientSize = new System.Drawing.Size(1345, 690);
+            Controls.Add(groupBox2);
+            Controls.Add(label9);
             Controls.Add(groupBox1);
             Controls.Add(lblVmDetails);
             Controls.Add(lblListOfVms);
-            Controls.Add(listView1);
-            Controls.Add(lblSelectHost);
-            Controls.Add(comboBoxHosts);
+            Controls.Add(listViewVmList);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             Icon = ((System.Drawing.Icon)resources.GetObject("$this.Icon"));
             Text = "SCP File Transfer";
-            ((System.ComponentModel.ISupportInitialize)pictureBoxPingStatus).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBoxSSHStatus).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxPingStatus).EndInit();
             panelDragDrop.ResumeLayout(false);
             panelDragDrop.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvInstalledVersions).EndInit();
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            groupBox2.ResumeLayout(false);
+            groupBox2.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
+
+        private System.Windows.Forms.GroupBox groupBox2;
+
+        private System.Windows.Forms.Label label9;
+
+        private System.Windows.Forms.ColumnHeader Vms;
 
         private System.Windows.Forms.ColumnHeader Status;
 
@@ -518,41 +547,39 @@
 
         #endregion
 
-        private Button btnSelectLocalFile;
-        private TextBox txtLocalFilePath;
-        private Button btnSelectRemoteDirectory;
-        private TreeView treeViewRemoteDirectories;
-        private Button btnTransferFile;
-        private TextBox txtRemoteDirectoryPath;
-        private ProgressBar progressBar;
-        private Label lblFileSize;
-        private ComboBox comboBoxMode;
-        private System.Windows.Forms.ComboBox comboBoxHosts;
-        private Label lblTransferMode;
-        private System.Windows.Forms.Label lblSelectHost;
-        private PictureBox pictureBoxPingStatus;
-        private PictureBox pictureBoxSSHStatus;
-        private Label lblPingStatus;
-        private Label lblSSHStatus;
-        private Button btnSshConsole;
-        private Panel panelDragDrop;
-        private Label lblDragDrop;
-        private System.Windows.Forms.ListView listView1;
+        private System.Windows.Forms.Button btnSelectLocalFile;
+        private System.Windows.Forms.TextBox txtLocalFilePath;
+        private System.Windows.Forms.Button btnSelectRemoteDirectory;
+        private System.Windows.Forms.TreeView treeViewRemoteDirectories;
+        private System.Windows.Forms.Button btnTransferFile;
+        private System.Windows.Forms.TextBox txtRemoteDirectoryPath;
+        private System.Windows.Forms.ProgressBar progressBar;
+        private System.Windows.Forms.Label lblFileSize;
+        private System.Windows.Forms.ComboBox comboBoxMode;
+        private System.Windows.Forms.Label lblTransferMode;
+        private System.Windows.Forms.PictureBox pictureBoxPingStatus;
+        private System.Windows.Forms.PictureBox pictureBoxSSHStatus;
+        private System.Windows.Forms.Label lblPingStatus;
+        private System.Windows.Forms.Label lblSSHStatus;
+        private System.Windows.Forms.Button btnSshConsole;
+        private System.Windows.Forms.Panel panelDragDrop;
+        private System.Windows.Forms.Label lblDragDrop;
+        private System.Windows.Forms.ListView listViewVmList;
         private Label lblListOfVms;
         private System.Windows.Forms.ComboBox comboBoxPipelines;
-        private TextBox textBox1;
-        private Label label1;
+        private System.Windows.Forms.TextBox txtVmName;
+        private System.Windows.Forms.Label label1;
         private Label lblVmDetails;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.DataGridView dgvInstalledVersions;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox textBox4;
+        private System.Windows.Forms.TextBox txtVmOs;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox textBox3;
-        private Label label2;
-        private TextBox textBox2;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.TextBox textBox5;
+        private System.Windows.Forms.TextBox txtVmIp;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox txtVmType;
+        private System.Windows.Forms.Button btnReloadVmInformation;
+        private System.Windows.Forms.TextBox txtLastVmInstalledVersionReload;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label5;

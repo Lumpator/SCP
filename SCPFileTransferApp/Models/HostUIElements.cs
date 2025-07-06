@@ -14,5 +14,7 @@ namespace SCPFileTransferApp.Models
         public required Button BtnSelectRemoteDirectory { get; set; }
         public required Button BtnJenkinsDownload { get; set; }
         
+        public required Button BtnReloadVmInformation { get; set; }
+        
         }
     }

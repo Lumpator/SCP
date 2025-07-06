@@ -72,6 +72,7 @@ namespace SCPFileTransferApp.Helpers
             hostUIElements.TreeViewRemoteDirectories.Enabled = enabled;
             hostUIElements.BtnSelectRemoteDirectory.Enabled = enabled;
             hostUIElements.BtnJenkinsDownload.Enabled = enabled;
+            hostUIElements.BtnReloadVmInformation.Enabled = enabled;
             }
         public static void ToggleDisabledDuringTransferUIElements(bool enabled, DisabledDuringTransferElements UIElements)
             {
@@ -81,7 +82,7 @@ namespace SCPFileTransferApp.Helpers
             UIElements.BtnSelectRemoteDirectory.Enabled = enabled;
             UIElements.BtnSelectLocalFile.Enabled = enabled;
             UIElements.BtnTransferFile.Enabled = enabled;
-            UIElements.ComboBoxHosts.Enabled = enabled;
+            UIElements.HostsListView.Enabled = enabled;
             }
         public static void UpdateTransferModeUI(TransferMode transferMode, TransferModeUIElements uiElements)
             {
