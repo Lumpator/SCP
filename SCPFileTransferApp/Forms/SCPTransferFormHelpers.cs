@@ -3,9 +3,9 @@ using SCPFileTransferApp.Models;
 using SCPFileTransferApp.Services;
 using static SCPFileTransferApp.Models.Enums;
 
-namespace SCPFileTransferApp.Helpers
+namespace SCPFileTransferApp.Forms
 {
-    public static class SCPTransferFormHelpers
+    public static class ScpTransferFormHelpers
     {
         public static List<HostInfo>? LoadHosts()
         {
@@ -56,42 +56,42 @@ namespace SCPFileTransferApp.Helpers
             }
         }
 
-        public static void UpdateStatusIcons(bool canPing, bool canSSH, PictureBox pingStatus, PictureBox SSHstatus)
+        public static void UpdateStatusIcons(bool canPing, bool canSsh, PictureBox pingStatus, PictureBox ssHstatus)
         {
             pingStatus.Image = canPing ? Properties.Resources.GreenCircle : Properties.Resources.RedCircle;
-            SSHstatus.Image = canSSH ? Properties.Resources.GreenCircle : Properties.Resources.RedCircle;
+            ssHstatus.Image = canSsh ? Properties.Resources.GreenCircle : Properties.Resources.RedCircle;
         }
 
-        public static void UpdateStatusIcons(bool loading, PictureBox pingStatus, PictureBox SSHstatus)
+        public static void UpdateStatusIcons(bool loading, PictureBox pingStatus, PictureBox ssHstatus)
         {
             var loadingImage = Properties.Resources.LoadingCircle;
             pingStatus.Image = loading ? loadingImage : Properties.Resources.RedCircle;
-            SSHstatus.Image = loading ? loadingImage : Properties.Resources.RedCircle;
+            ssHstatus.Image = loading ? loadingImage : Properties.Resources.RedCircle;
         }
 
-        public static void ToggleHostUIElements(bool enabled, HostUIElements hostUIElements)
+        public static void ToggleHostUiElements(bool enabled, HostUiElements hostUiElements)
         {
-            hostUIElements.BtnSshConsole.Enabled = enabled;
-            hostUIElements.TxtRemoteDirectoryPath.Enabled = enabled;
-            hostUIElements.TreeViewRemoteDirectories.Enabled = enabled;
-            hostUIElements.BtnSelectRemoteDirectory.Enabled = enabled;
-            hostUIElements.BtnJenkinsDownload.Enabled = enabled;
-            hostUIElements.BtnReloadVmInformation.Enabled = enabled;
+            hostUiElements.BtnSshConsole.Enabled = enabled;
+            hostUiElements.TxtRemoteDirectoryPath.Enabled = enabled;
+            hostUiElements.TreeViewRemoteDirectories.Enabled = enabled;
+            hostUiElements.BtnSelectRemoteDirectory.Enabled = enabled;
+            hostUiElements.BtnJenkinsDownload.Enabled = enabled;
+            hostUiElements.BtnReloadVmInformation.Enabled = enabled;
         }
 
-        public static void ToggleDisabledDuringTransferUIElements(bool enabled,
-            DisabledDuringTransferElements UIElements)
+        public static void ToggleDisabledDuringTransferUiElements(bool enabled,
+            DisabledDuringTransferElements uiElements)
         {
-            UIElements.TxtRemoteDirectoryPath.Enabled = enabled;
-            UIElements.TxtLocalDirectoryPath.Enabled = enabled;
-            UIElements.TreeViewRemoteDirectories.Enabled = enabled;
-            UIElements.BtnSelectRemoteDirectory.Enabled = enabled;
-            UIElements.BtnSelectLocalFile.Enabled = enabled;
-            UIElements.BtnTransferFile.Enabled = enabled;
-            UIElements.HostsListView.Enabled = enabled;
+            uiElements.TxtRemoteDirectoryPath.Enabled = enabled;
+            uiElements.TxtLocalDirectoryPath.Enabled = enabled;
+            uiElements.TreeViewRemoteDirectories.Enabled = enabled;
+            uiElements.BtnSelectRemoteDirectory.Enabled = enabled;
+            uiElements.BtnSelectLocalFile.Enabled = enabled;
+            uiElements.BtnTransferFile.Enabled = enabled;
+            uiElements.HostsListView.Enabled = enabled;
         }
 
-        public static void UpdateTransferModeUI(TransferMode transferMode, TransferModeUIElements uiElements)
+        public static void UpdateTransferModeUi(TransferMode transferMode, TransferModeUiElements uiElements)
         {
             if (transferMode == TransferMode.TransferTo)
             {
@@ -197,20 +197,6 @@ namespace SCPFileTransferApp.Helpers
             return (vmName.Trim(), vmOs.Trim(), vmIp);
         }
 
-        public static bool IsWingetInstalled(SshService sshService)
-        {
-            try
-            {
-                var output = sshService.RunCommand("winget --version");
-                return !string.IsNullOrWhiteSpace(output) &&
-                       !output.Contains("not recognized", StringComparison.OrdinalIgnoreCase);
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
         public static async Task<List<InstalledAppVersion>> GetInstalledAppVersionsAsync(SshService sshService,
             List<AppInfo> apps)
         {
@@ -221,58 +207,21 @@ namespace SCPFileTransferApp.Helpers
                 try
                 {
                     string output = null;
-                    // Získání verze z registrů pro všechny uživatele i aktuálního uživatele (HKLM i HKCU, 32/64bit)
                     string psScript =
                         $@"$results = @(); " +
                         $@"$results += Get-ItemProperty 'HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*' -ErrorAction SilentlyContinue; " +
                         $@"$results += Get-ItemProperty 'HKLM:\\Software\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*' -ErrorAction SilentlyContinue; " +
                         $@"$results += Get-ItemProperty 'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*' -ErrorAction SilentlyContinue; " +
                         $@"$results | Where-Object {{$_.DisplayName -like '*{app.WingetName}*'}} | Select-Object -ExpandProperty DisplayVersion | Out-String";
-                    output = sshService.RunCommand($"powershell -Command \"{psScript}\"");
+                    output = await Task.Run(() => sshService.RunCommand($"powershell -Command \"{psScript}\""));
                     if (!string.IsNullOrWhiteSpace(output))
                     {
                         version = output.Trim().Split('\n').FirstOrDefault()?.Trim() ?? "Not found";
                     }
-                    /*
-                    // Fallback na winget (momentálně zakomentováno)
-                    if (string.IsNullOrWhiteSpace(output) && hasWinget)
-                    {
-                        output = await Task.Run(() => sshService.RunCommand($"winget list \"{app.WingetName}\" --accept-source-agreements"));
-                        if (!string.IsNullOrWhiteSpace(output))
-                        {
-                            var lines = output.Split('\n');
-                            int versionIndex = -1;
-                            foreach (var line in lines)
-                            {
-                                if (line.Trim().StartsWith("Name") && line.Contains("Version"))
-                                {
-                                    var headerParts = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                                    for (int i = 0; i < headerParts.Length; i++)
-                                    {
-                                        if (headerParts[i].Equals("Version", StringComparison.OrdinalIgnoreCase))
-                                        {
-                                            versionIndex = i;
-                                            break;
-                                        }
-                                    }
-                                }
-                                else if (versionIndex != -1)
-                                {
-                                    var parts = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                                    if (parts.Length > versionIndex)
-                                    {
-                                        version = parts[versionIndex];
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    */
                 }
                 catch
                 {
-                    /* ignore errors here */
+                    MessageBox.Show("Error retrieving version for " + app.DisplayName);
                 }
 
                 installedAppVersions.Add(new InstalledAppVersion { DisplayName = app.DisplayName, Version = version });

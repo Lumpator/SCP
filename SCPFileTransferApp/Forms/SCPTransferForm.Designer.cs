@@ -1,6 +1,6 @@
-﻿namespace SCPFileTransferApp
+﻿namespace SCPFileTransferApp.Forms
     {
-    partial class SCPTransferForm
+    partial class ScpTransferForm
         {
         /// <summary>
         ///  Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SCPTransferForm));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ScpTransferForm));
             listViewVmList = new System.Windows.Forms.ListView();
             Vms = new System.Windows.Forms.ColumnHeader();
             lblListOfVms = new System.Windows.Forms.Label();

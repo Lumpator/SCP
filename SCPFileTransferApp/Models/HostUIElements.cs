@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SCPFileTransferApp.Models
 {
-    public class HostUIElements
+    public class HostUiElements
     {
         public required Button BtnSshConsole { get; set; }
         public required TextBox TxtRemoteDirectoryPath { get; set; }

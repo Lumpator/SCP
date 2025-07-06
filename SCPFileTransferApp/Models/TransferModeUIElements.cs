@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SCPFileTransferApp.Models
 {
-    public class TransferModeUIElements
+    public class TransferModeUiElements
     {
         public required Panel PanelDragDrop { get; set; }
         public required Label LblFileSize { get; set; }

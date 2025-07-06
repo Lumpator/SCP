@@ -1,14 +1,11 @@
-using SCPFileTransferApp.Helpers;
+using Newtonsoft.Json;
 using SCPFileTransferApp.Models;
 using SCPFileTransferApp.Services;
 using static SCPFileTransferApp.Models.Enums;
-using System.IO;
-using Newtonsoft.Json;
-using System.Collections.Generic;
 
-namespace SCPFileTransferApp
+namespace SCPFileTransferApp.Forms
 {
-    public partial class SCPTransferForm : Form
+    public partial class ScpTransferForm : Form
     {
         private string? localFilePath;
         private string? remoteDirectoryPath;
@@ -17,24 +14,24 @@ namespace SCPFileTransferApp
         private SftpService sftpService;
         private SshService sshService;
         private NetworkService networkService;
-        private HostUIElements hostUIElements;
+        private HostUiElements hostUiElements;
         private PipelineRepository pipelineRepository;
-        private TransferModeUIElements transferModeUIElements;
+        private TransferModeUiElements transferModeUiElements;
         private DisabledDuringTransferElements disabledDuringTransferElements;
         private InstalledVersionsRepository installedVersionsRepository;
 
 
-        public SCPTransferForm()
+        public ScpTransferForm()
         {
             InitializeComponent();
             networkService = new NetworkService();
-            hosts = SCPTransferFormHelpers.LoadHosts();
+            hosts = ScpTransferFormHelpers.LoadHosts();
             PopulateVmListView(hosts);
             pipelineRepository = new PipelineRepository();
             PopulatePipelinesComboBox();
             installedVersionsRepository = new InstalledVersionsRepository();
 
-            hostUIElements = new HostUIElements
+            hostUiElements = new HostUiElements
             {
                 BtnSshConsole = btnSshConsole,
                 TxtRemoteDirectoryPath = txtRemoteDirectoryPath,
@@ -44,7 +41,7 @@ namespace SCPFileTransferApp
                 BtnReloadVmInformation = btnReloadVmInformation
             };
 
-            transferModeUIElements = new TransferModeUIElements
+            transferModeUiElements = new TransferModeUiElements
             {
                 PanelDragDrop = panelDragDrop,
                 LblFileSize = lblFileSize,
@@ -65,7 +62,7 @@ namespace SCPFileTransferApp
                 HostsListView = listViewVmList
             };
             
-            SCPTransferFormHelpers.ToggleHostUIElements(false, hostUIElements);
+            ScpTransferFormHelpers.ToggleHostUiElements(false, hostUiElements);
             comboBoxMode.SelectedIndex = 0; // 0 = Transfer to, 1 = Transfer from          
         }
 
@@ -106,12 +103,12 @@ namespace SCPFileTransferApp
                 remoteDirectoryPath = null;
                 var selectedHost = (HostInfo)listViewVmList.SelectedItems[0].Tag;
                 ShowInstalledVersionsForHost(selectedHost.Name);
-                await CheckPingAndSSHAsync(selectedHost);
+                await CheckPingAndSshAsync(selectedHost);
             }
             else
             {
-                SCPTransferFormHelpers.ToggleHostUIElements(false, hostUIElements);
-                SCPTransferFormHelpers.UpdateStatusIcons(false, false, pictureBoxPingStatus, pictureBoxSSHStatus);
+                ScpTransferFormHelpers.ToggleHostUiElements(false, hostUiElements);
+                ScpTransferFormHelpers.UpdateStatusIcons(false, false, pictureBoxPingStatus, pictureBoxSSHStatus);
                 txtLastVmInstalledVersionReload.Text = "";
                 dgvInstalledVersions.DataSource = null;
             }
@@ -145,7 +142,7 @@ namespace SCPFileTransferApp
 
             int rowIndex = AddStatusRow($"Downloading {selectedPipeline} to {vmName}...", Color.LightYellow);
 
-            bool result = await SCPTransferFormHelpers.DownloadPipelineToRemoteAsync(
+            bool result = await ScpTransferFormHelpers.DownloadPipelineToRemoteAsync(
                 sshService, url, remoteDirectoryPath, progress => { /* Optionally handle progress */ });
 
             if (result)
@@ -163,12 +160,12 @@ namespace SCPFileTransferApp
         {
             if (transferMode == TransferMode.TransferTo)
             {
-                var selectedFile = SCPTransferFormHelpers.SelectLocalFileAndGetPath();
+                var selectedFile = ScpTransferFormHelpers.SelectLocalFileAndGetPath();
                 if (!string.IsNullOrEmpty(selectedFile))
                 {
                     localFilePath = selectedFile;
                     txtLocalFilePath.Text = localFilePath;
-                    SCPTransferFormHelpers.UpdateFileSizeLabel(lblFileSize, localFilePath);
+                    ScpTransferFormHelpers.UpdateFileSizeLabel(lblFileSize, localFilePath);
                 }
             }
             else if (transferMode == TransferMode.TransferFrom)
@@ -193,11 +190,11 @@ namespace SCPFileTransferApp
 
                 if (transferMode == TransferMode.TransferTo)
                 {
-                    SCPTransferFormHelpers.LoadRemoteDirectories(sftpService, treeViewRemoteDirectories, "/");
+                    ScpTransferFormHelpers.LoadRemoteDirectories(sftpService, treeViewRemoteDirectories, "/");
                 }
                 else if (transferMode == TransferMode.TransferFrom)
                 {
-                    SCPTransferFormHelpers.LoadRemoteFiles(sftpService, treeViewRemoteDirectories, "/");
+                    ScpTransferFormHelpers.LoadRemoteFiles(sftpService, treeViewRemoteDirectories, "/");
                 }
             }
             catch (Exception ex)
@@ -233,7 +230,7 @@ namespace SCPFileTransferApp
 
             if (transferMode == TransferMode.TransferTo)
             {
-                if (selectedNode.Nodes.Count > 0 || SCPTransferFormHelpers.IsDirectory(sftpService, selectedNode))
+                if (selectedNode.Nodes.Count > 0 || ScpTransferFormHelpers.IsDirectory(sftpService, selectedNode))
                 {
                     remoteDirectoryPath = selectedPath;
                     txtRemoteDirectoryPath.Text = remoteDirectoryPath;
@@ -246,13 +243,13 @@ namespace SCPFileTransferApp
             }
             else if (transferMode == TransferMode.TransferFrom)
             {
-                if (selectedNode.Nodes.Count == 0 && !SCPTransferFormHelpers.IsDirectory(sftpService, selectedNode))
+                if (selectedNode.Nodes.Count == 0 && !ScpTransferFormHelpers.IsDirectory(sftpService, selectedNode))
                 {
                     remoteDirectoryPath = selectedPath;
                     txtRemoteDirectoryPath.Text = remoteDirectoryPath;
 
                     var fileAttributes = sftpService.GetFileAttributes(remoteDirectoryPath);
-                    SCPTransferFormHelpers.UpdateFileSizeLabel(lblFileSize, localFilePath, fileAttributes.Size);
+                    ScpTransferFormHelpers.UpdateFileSizeLabel(lblFileSize, localFilePath, fileAttributes.Size);
                 }
                 else
                 {
@@ -273,20 +270,20 @@ namespace SCPFileTransferApp
                 return;
             }
 
-            SCPTransferFormHelpers.ToggleDisabledDuringTransferUIElements(false, disabledDuringTransferElements);
+            ScpTransferFormHelpers.ToggleDisabledDuringTransferUiElements(false, disabledDuringTransferElements);
             try
             {
                 if (transferMode == TransferMode.TransferTo)
                 {
                     await sftpService.UploadFileAsync(localFilePath, remoteDirectoryPath,
-                        progress => { SCPTransferFormHelpers.UpdateProgressBar(this, progressBar, progress); });
+                        progress => { ScpTransferFormHelpers.UpdateProgressBar(this, progressBar, progress); });
 
                     MessageBox.Show("File transferred successfully.");
                 }
                 else if (transferMode == TransferMode.TransferFrom)
                 {
                     await sftpService.DownloadFileAsync(remoteDirectoryPath, localFilePath,
-                        progress => { SCPTransferFormHelpers.UpdateProgressBar(this, progressBar, progress); });
+                        progress => { ScpTransferFormHelpers.UpdateProgressBar(this, progressBar, progress); });
                     MessageBox.Show("File transferred successfully.");
                 }
             }
@@ -297,7 +294,7 @@ namespace SCPFileTransferApp
             finally
             {
                 progressBar.Value = 0;
-                SCPTransferFormHelpers.ToggleDisabledDuringTransferUIElements(true, disabledDuringTransferElements);
+                ScpTransferFormHelpers.ToggleDisabledDuringTransferUiElements(true, disabledDuringTransferElements);
             }
         }
 
@@ -312,14 +309,14 @@ namespace SCPFileTransferApp
                 transferMode = TransferMode.TransferFrom;
             }
 
-            SCPTransferFormHelpers.UpdateTransferModeUI(transferMode, transferModeUIElements);
+            ScpTransferFormHelpers.UpdateTransferModeUi(transferMode, transferModeUiElements);
         }
 
         private void btnSshConsole_Click(object sender, EventArgs e)
         {
             try
             {
-                sshService.OpenSSHConnection();
+                sshService.OpenSshConnection();
             }
             catch (Exception ex)
             {
@@ -352,7 +349,7 @@ namespace SCPFileTransferApp
                     if (transferMode == TransferMode.TransferTo)
                     {
                         localFilePath = filePath;
-                        SCPTransferFormHelpers.UpdateFileSizeLabel(lblFileSize, localFilePath);
+                        ScpTransferFormHelpers.UpdateFileSizeLabel(lblFileSize, localFilePath);
                     }
                     else
                     {
@@ -362,20 +359,20 @@ namespace SCPFileTransferApp
             }
         }
 
-        private async Task CheckPingAndSSHAsync(HostInfo selectedHost)
+        private async Task CheckPingAndSshAsync(HostInfo selectedHost)
         {
-            SCPTransferFormHelpers.UpdateStatusIcons(loading: true, pictureBoxPingStatus, pictureBoxSSHStatus);
+            ScpTransferFormHelpers.UpdateStatusIcons(loading: true, pictureBoxPingStatus, pictureBoxSSHStatus);
 
             bool canPing = await networkService.CheckPingAsync(selectedHost.Host);
-            bool canSSH = await SftpService.CheckSSHConnectionAsync(selectedHost);
+            bool canSsh = await SftpService.CheckSshConnectionAsync(selectedHost);
 
-            SCPTransferFormHelpers.UpdateStatusIcons(canPing, canSSH, pictureBoxPingStatus, pictureBoxSSHStatus);
+            ScpTransferFormHelpers.UpdateStatusIcons(canPing, canSsh, pictureBoxPingStatus, pictureBoxSSHStatus);
 
-            if (canPing && canSSH)
+            if (canPing && canSsh)
             {
                 sshService = new SshService(selectedHost);
                 sftpService = new SftpService(selectedHost);
-                SCPTransferFormHelpers.ToggleHostUIElements(true, hostUIElements);
+                ScpTransferFormHelpers.ToggleHostUiElements(true, hostUiElements);
             }
         }
 
@@ -460,12 +457,12 @@ namespace SCPFileTransferApp
 
                 // Získání hostname a OS přes SSH
                 var selectedHost = listViewVmList.SelectedItems.Count > 0 ? (HostInfo)listViewVmList.SelectedItems[0].Tag : null;
-                var (vmName, vmOs, vmIp) = await SCPTransferFormHelpers.GetVmInfoAsync(sshService, selectedHost);
+                var (vmName, vmOs, vmIp) = await ScpTransferFormHelpers.GetVmInfoAsync(sshService, selectedHost);
                 txtVmName.Text = vmName;
                 txtVmIp.Text = vmIp;
                 txtVmOs.Text = vmOs;
 
-                var installedAppVersions = await SCPTransferFormHelpers.GetInstalledAppVersionsAsync(sshService, apps);
+                var installedAppVersions = await ScpTransferFormHelpers.GetInstalledAppVersionsAsync(sshService, apps);
 
                 // Uložení nových hodnot do repository včetně VM info
                 if (selectedHost != null)

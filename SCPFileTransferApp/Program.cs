@@ -1,3 +1,5 @@
+using SCPFileTransferApp.Forms;
+
 namespace SCPFileTransferApp
     {
     internal static class Program
@@ -11,7 +13,7 @@ namespace SCPFileTransferApp
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            Application.Run(new SCPTransferForm());
+            Application.Run(new ScpTransferForm());
             }
         }
     }

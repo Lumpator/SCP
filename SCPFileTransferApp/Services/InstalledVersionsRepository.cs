@@ -9,18 +9,18 @@ namespace SCPFileTransferApp.Services
 {
     public class InstalledVersionsRepository
     {
-        private readonly string _filePath;
+        private readonly string filePath;
 
         public InstalledVersionsRepository(string filePath = null)
         {
-            _filePath = filePath ?? Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "installed_versions.json");
+            this.filePath = filePath ?? Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "installed_versions.json");
         }
 
         public List<InstalledVersionsInfo> LoadAll()
         {
-            if (!File.Exists(_filePath))
+            if (!File.Exists(filePath))
                 return new List<InstalledVersionsInfo>();
-            var json = File.ReadAllText(_filePath);
+            var json = File.ReadAllText(filePath);
             return JsonConvert.DeserializeObject<List<InstalledVersionsInfo>>(json) ??
                    new List<InstalledVersionsInfo>();
         }
@@ -42,7 +42,7 @@ namespace SCPFileTransferApp.Services
 
             all.Add(info);
             var json = JsonConvert.SerializeObject(all, Formatting.Indented);
-            File.WriteAllText(_filePath, json);
+            File.WriteAllText(filePath, json);
         }
     }
 }

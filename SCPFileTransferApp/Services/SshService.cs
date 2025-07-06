@@ -13,7 +13,7 @@ namespace SCPFileTransferApp.Services
             this.hostInfo = hostInfo;
         }
 
-        public void OpenSSHConnection()
+        public void OpenSshConnection()
         {
             try
             {

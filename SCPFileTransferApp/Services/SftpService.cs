@@ -113,7 +113,7 @@ namespace SCPFileTransferApp.Services
             return sftpClient.GetAttributes(remoteFilePath);
         }
 
-        public static async Task<bool> CheckSSHConnectionAsync(HostInfo host)
+        public static async Task<bool> CheckSshConnectionAsync(HostInfo host)
         {
             try
             {
