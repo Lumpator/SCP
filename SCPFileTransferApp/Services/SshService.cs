@@ -1,5 +1,4 @@
 ﻿using SCPFileTransferApp.Models;
-using System;
 using System.Diagnostics;
 
 namespace SCPFileTransferApp.Services

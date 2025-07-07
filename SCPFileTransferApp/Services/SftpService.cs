@@ -1,10 +1,6 @@
 ﻿using Renci.SshNet;
 using Renci.SshNet.Sftp;
 using SCPFileTransferApp.Models;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
 
 namespace SCPFileTransferApp.Services
 {

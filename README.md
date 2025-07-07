@@ -1,6 +1,6 @@
 # VMs Dashboard App
 
-A Windows desktop application for secure file transfer and remote management of virtual machines (VMs) over SSH/SFTP. 
+A Windows desktop application for secure file transfer and remote management of virtual machines (VMs) over SSH/SFTP.
 
 ## Features
 
@@ -24,8 +24,7 @@ A Windows desktop application for secure file transfer and remote management of 
 - **Installed Apps Overview**: Display a table of installed applications and their versions for each VM.
 - **Reload VM Information**: Refresh and retrieve the latest installed app versions and VM details (hostname, OS, IP).
 - **Automatic App Version Detection**:
-  - Uses `winget` if available (with auto-acceptance of source agreements).
-  - Falls back to PowerShell registry queries if `winget` is not present.
+  - Uses PowerShell registry queries to detect installed application versions.
   - Handles both 64-bit and 32-bit registry locations.
 
 ## Configuration Files
@@ -76,18 +75,16 @@ A Windows desktop application for secure file transfer and remote management of 
 - Windows 10/11
 - .NET 8.0 or newer
 - SSH access to target VMs
-- For app version detection: `winget` (App Installer) or PowerShell access
+- For app version detection: PowerShell access
 
 ## How It Works
 1. **Load Hosts**: Reads `hosts.json` and populates the VM list.
 2. **Select VM**: Checks ping/SSH, displays installed apps, and enables file transfer controls.
 3. **Transfer Files**: Choose transfer mode, select files/directories, and start transfer with progress feedback.
 4. **Jenkins Download**: Select a pipeline and target directory, then download artifacts directly to the VM.
-5. **App Version Detection**: On reload, retrieves app versions using `winget` or PowerShell registry queries.
+5. **App Version Detection**: On reload, retrieves app versions using PowerShell registry queries.
 
 ## Troubleshooting
-- **winget Not Installed**: The app will automatically fall back to PowerShell registry queries for app version detection.
-- **winget Prompts for Agreements**: The app pre-accepts agreements to avoid blocking automation.
 - **Missing App Data**: Ensure the remote VM has PowerShell and registry access enabled.
 - **SSH/Network Issues**: Check VM network/firewall settings and SSH credentials.
 

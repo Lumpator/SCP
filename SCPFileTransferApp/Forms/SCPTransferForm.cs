@@ -113,7 +113,7 @@ namespace SCPFileTransferApp.Forms
                 dgvInstalledVersions.DataSource = null;
             }
 
-            listViewVmList.Enabled = true; // Opětovné povolení výběru
+            listViewVmList.Enabled = true;
         }
 
         private async void btnJenkinsDownload_Click(object sender, EventArgs e)
